@@ -1,5 +1,22 @@
  <template>
   <div>
+    <div class="flex justify-between items-center mb-2">
+      <h2 class="text-base">Score Table</h2>
+      <div class="flex gap-2">
+        <button 
+          @click="showAddPlayer = true"
+          class="bg-green-500 hover:bg-green-600 text-white text-xs px-2 py-1 rounded dark:bg-green-600 dark:hover:bg-green-700"
+        >
+          Add Player
+        </button>
+        <button 
+          @click="$emit('reset-scores')"
+          class="bg-orange-500 hover:bg-orange-600 text-white text-xs px-2 py-1 rounded dark:bg-orange-600 dark:hover:bg-orange-700"
+        >
+          Reset Scores
+        </button>
+      </div>
+    </div>
     <div class="rounded-lg overflow-x-auto">
       <div class="max-h-[80vh] overflow-y-auto">
         <table class="w-full text-sm relative">
@@ -8,7 +25,16 @@
               <th class="w-4/12 md:w-2/12 px-2 py-1 text-left bg-inherit">Category</th>
               <th v-for="player in playersWithWins" :key="player.name" class="w-1/12 px-2 py-1 transition-colors duration-300" :class="getPlayerPositionClass(player)">
                 <div class="flex flex-col items-center">
-                  <span>{{ player.name }}</span>
+                  <div class="flex items-center gap-1">
+                    <span>{{ player.name }}</span>
+                    <button 
+                      @click.stop="removePlayer(player)"
+                      class="text-red-500 hover:text-red-600 dark:text-red-400 hover:scale-125 transition-transform"
+                      title="Remove player"
+                    >
+                      ×
+                    </button>
+                  </div>
                   <span v-if="player.wins > 0" class="text-xs">
                     {{ player.wins }} {{ player.wins === 1 ? 'win' : 'wins' }}
                   </span>
@@ -106,22 +132,6 @@
                 </div>
               </td>
             </tr>
-            <!-- Add this row just before the final Total Score row -->
-            <tr class="bg-gray-100 dark:bg-gray-900">
-              <td class="px-2 py-1 font-bold bg-inherit">Theoretical</td>
-              <td v-for="player in props.players" :key="player.name" class="px-1 text-center text-md">
-                {{ calculateMaxPossible(player) }}
-              </td>
-              <td class="px-2 py-1 font-bold bg-inherit">Theoretical</td>
-            </tr>
-            <!-- Total score -->
-            <tr class="bg-yellow-100 font-bold text-sm dark:bg-yellow-900">
-              <td class="px-2 py-1 bg-inherit">Total Score</td>
-              <td v-for="player in props.players" :key="player.name" class="px-1 py-1 text-center text-md transition-colors duration-300" :class="getPlayerPositionClass(player)">
-                {{ calculateTotalScore(player) }}
-              </td>
-              <td class="px-2 py-1 bg-inherit">Total Score</td>
-            </tr>
           </tbody>
           <tfoot class="sticky bottom-0 z-20">
             <!-- Theoretical max -->
@@ -194,6 +204,65 @@
         </button>
       </template>
     </Modal>
+
+    <!-- Add Player Modal -->
+    <Modal 
+      :show="showAddPlayer" 
+      title="Add New Player"
+    >
+      <div class="flex flex-col gap-4">
+        <input
+          v-model="newPlayerName"
+          type="text"
+          class="w-full border border-gray-300 px-3 py-2 rounded text-lg 
+                 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+          placeholder="Enter player name"
+          @keyup.enter="addPlayer"
+        />
+      </div>
+      
+      <template #actions>
+        <button 
+          @click="cancelAddPlayer"
+          class="px-4 py-2 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700"
+        >
+          Cancel
+        </button>
+        <button 
+          @click="addPlayer"
+          class="px-4 py-2 text-sm bg-green-500 text-white rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
+        >
+          Add
+        </button>
+      </template>
+    </Modal>
+
+    <!-- Remove Player Modal -->
+    <Modal 
+      :show="playerToRemove !== null" 
+      title="Remove Player"
+    >
+      <div class="text-center">
+        Are you sure you want to remove {{ playerToRemove?.name }}?
+        <br>
+        All scores will be lost.
+      </div>
+      
+      <template #actions>
+        <button 
+          @click="cancelRemovePlayer"
+          class="px-4 py-2 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700"
+        >
+          Cancel
+        </button>
+        <button 
+          @click="confirmRemovePlayer"
+          class="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"
+        >
+          Remove
+        </button>
+      </template>
+    </Modal>
   </div>
 </template>
 
@@ -209,8 +278,8 @@
    props: {
      players: Array,
    },
-   emits: ['reset-scores'],
-   setup(props) {
+   emits: ['reset-scores', 'remove-player'],
+   setup(props, ctx) {
      const upperCategories = ['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes'];
      const lowerCategories = [
        'One Pair', 'Two Pairs', 'Three of a Kind', 'Four of a Kind', 
@@ -462,6 +531,49 @@
        }
      };
 
+     const showAddPlayer = ref(false);
+     const newPlayerName = ref('');
+     const playerToRemove = ref(null);
+
+     const addPlayer = () => {
+       if (newPlayerName.value.trim()) {
+         props.players.push({
+           name: newPlayerName.value.trim(),
+           scores: {},
+           total: 0
+         });
+         showAddPlayer.value = false;
+         newPlayerName.value = '';
+       }
+     };
+
+     const cancelAddPlayer = () => {
+       showAddPlayer.value = false;
+       newPlayerName.value = '';
+     };
+
+     const removePlayer = (player) => {
+       playerToRemove.value = player;
+     };
+
+     const confirmRemovePlayer = () => {
+       ctx.emit('remove-player', playerToRemove.value);
+       playerToRemove.value = null;
+     };
+
+     const cancelRemovePlayer = () => {
+       playerToRemove.value = null;
+     };
+
+     // Add player name column header with remove button
+     const renderPlayerHeader = (player) => {
+       return {
+         name: player.name,
+         wins: getPlayerWins(player.name),
+         removeAction: () => removePlayer(player)
+       };
+     };
+
      return { 
        upperCategories,
        lowerCategories,
@@ -485,6 +597,15 @@
        playersWithWins,
        props,
        getPlayerPositionClass,
+       showAddPlayer,
+       newPlayerName,
+       playerToRemove,
+       addPlayer,
+       cancelAddPlayer,
+       removePlayer,
+       confirmRemovePlayer,
+       cancelRemovePlayer,
+       renderPlayerHeader
      };
    },
  };

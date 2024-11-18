@@ -51,12 +51,20 @@
             </tr>
           </tbody>
         </table>
-        <button 
-          @click="game.showDetails = !game.showDetails" 
-          class="text-blue-500 dark:text-blue-400 text-sm mt-2 hover:underline"
-        >
-          {{ game.showDetails ? 'Hide Details' : 'Show Details' }}
-        </button>
+        <div class="flex justify-between items-center mt-2">
+          <button 
+            @click="game.showDetails = !game.showDetails" 
+            class="text-blue-500 dark:text-blue-400 text-sm hover:underline"
+          >
+            {{ game.showDetails ? 'Hide Details' : 'Show Details' }}
+          </button>
+          <button 
+            @click="startGameWithPlayers(game.players)"
+            class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded dark:bg-green-600 dark:hover:bg-green-700"
+          >
+            Use these players
+          </button>
+        </div>
         <div v-if="game.showDetails" class="mt-2">
           <table class="w-full text-sm">
             <thead>
@@ -92,9 +100,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import ScoreStats from './ScoreStats.vue';
 import Toast from './Toast.vue';
 
+const router = useRouter();
 const games = ref([]);
 const allCategories = [
   'Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes',
@@ -139,5 +149,23 @@ const clearHistory = () => {
     games.value = [];
     showNotification('All game history cleared');
   }
+};
+
+const startGameWithPlayers = (players) => {
+  if (localStorage.getItem('yatzyGameState')) {
+    if (!confirm('There is a game in progress. Do you want to start a new game with these players?')) {
+      return;
+    }
+    localStorage.removeItem('yatzyGameState');
+  }
+  
+  // Initialize new game with the selected players
+  const newGame = {
+    players: players.map(p => ({ name: p.name, scores: {}, total: 0 })),
+    gameStarted: true
+  };
+  
+  localStorage.setItem('yatzyGameState', JSON.stringify(newGame));
+  router.push('/game');
 };
 </script> 

@@ -4,7 +4,7 @@
       <PlayerSetup @players-added="initializeGame" />
     </div>
     <div v-else>
-      <ScoreTable :players="players" @reset-scores="resetScores" />
+      <ScoreTable :players="players" @reset-scores="resetScores" @remove-player="removePlayer" />
       <div class="mt-4 flex gap-2">
         <button 
           @click="endGame" 
@@ -32,6 +32,9 @@ import ScoreTable from '../components/ScoreTable.vue';
 const router = useRouter();
 const players = ref([]);
 const gameStarted = ref(false);
+const removePlayer = (player) => {
+  players.value = players.value.filter(p => p.name !== player.name);
+};
 
 onMounted(() => {
   const savedState = localStorage.getItem('yatzyGameState');
