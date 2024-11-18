@@ -179,7 +179,7 @@
    setup(props) {
      const upperCategories = ['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes'];
      const lowerCategories = [
-       '1 Pair', '2 Pairs', '3 of a Kind', '4 of a Kind', 
+       'One Pair', 'Two Pairs', 'Three of a Kind', 'Four of a Kind', 
        'Full House', 'Small Straight', 'Large Straight', 'Yahtzee', 'Chance'
      ];
 

@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen transition-colors duration-200 dark:bg-gray-900 dark:text-white">
-    <div class="container mx-auto px-2 py-4 max-w-3xl">
-      <div class="flex justify-between items-center mb-4">
+    <div class="container mx-auto px-2 py-2 max-w-3xl">
+      <div class="flex justify-between items-center mb-1">
         <div class="w-10">
         </div>
         <router-link to="/" class="text-xl sm:text-2xl font-bold">JatsApp</router-link>
