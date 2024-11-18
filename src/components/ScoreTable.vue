@@ -39,7 +39,9 @@
                  <input
                    v-model.number="scoreInput"
                    type="number"
-                   class="w-12 border border-gray-300 px-1 py-0.5 rounded text-sm"
+                   class="w-12 border border-gray-300 px-1 py-0.5 rounded text-sm 
+                          dark:bg-gray-700 dark:border-gray-600 dark:text-white 
+                          dark:focus:border-blue-500 dark:placeholder-gray-400"
                    ref="scoreInputRef"
                    @focus="$event.target.select()"
                  />
@@ -62,7 +64,10 @@
              <div 
                v-else 
                @click="selectCell(player, category)" 
-               class="min-w-[1.5rem] min-h-[1.5rem] border border-gray-300 rounded flex items-center justify-center cursor-pointer hover:bg-gray-50"
+               class="min-w-[1.5rem] min-h-[1.5rem] border border-gray-300 rounded 
+                      flex items-center justify-center cursor-pointer 
+                      hover:bg-gray-50 dark:border-gray-600 
+                      dark:hover:bg-gray-800"
              >
                {{ player.scores[category] !== undefined ? player.scores[category] : '-' }}
              </div>
@@ -117,7 +122,9 @@
                  <input
                    v-model.number="scoreInput"
                    type="number"
-                   class="w-12 border border-gray-300 px-1 py-0.5 rounded text-sm"
+                   class="w-12 border border-gray-300 px-1 py-0.5 rounded text-sm 
+                          dark:bg-gray-700 dark:border-gray-600 dark:text-white 
+                          dark:focus:border-blue-500 dark:placeholder-gray-400"
                    ref="scoreInputRef"
                    @focus="$event.target.select()"
                  />
@@ -140,7 +147,10 @@
              <div 
                v-else 
                @click="selectCell(player, category)" 
-               class="min-w-[1.5rem] min-h-[1.5rem] border border-gray-300 rounded flex items-center justify-center cursor-pointer hover:bg-gray-50"
+               class="min-w-[1.5rem] min-h-[1.5rem] border border-gray-300 rounded 
+                      flex items-center justify-center cursor-pointer 
+                      hover:bg-gray-50 dark:border-gray-600 
+                      dark:hover:bg-gray-800"
              >
                {{ player.scores[category] !== undefined ? player.scores[category] : '-' }}
              </div>
