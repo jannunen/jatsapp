@@ -1,12 +1,12 @@
 {
-  "name": "yatzy-score-manager",
+  "name": "jatsapp",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "deploy": "gh-pages -d dist",
     "dev": "vite",
-    "build": "vue-tsc && vite build --base=/yatzy-score-manager/",
+    "build": "vue-tsc && vite build --base=/jatsapp/",
     "preview": "vite preview"
   },
   "dependencies": {

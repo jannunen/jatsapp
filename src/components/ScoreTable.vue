@@ -4,22 +4,24 @@
        <h2 class="text-base">Score Table</h2>
        <button 
          @click="$emit('reset-scores')"
-         class="bg-orange-500 hover:bg-orange-600 text-white text-xs px-2 py-1 rounded"
+         class="bg-orange-500 hover:bg-orange-600 text-white text-xs px-2 py-1 rounded dark:bg-orange-600 dark:hover:bg-orange-700"
        >
          Reset Scores
        </button>
      </div>
-     <table class="table-auto w-full mb-2 border-collapse border border-gray-300 text-sm">
+     <table class="table-auto w-full mb-2 border-collapse border border-gray-300 dark:border-gray-600 text-sm">
        <thead>
-         <tr>
-           <th class="w-1/4 border px-2 py-1">Category</th>
-           <th v-for="player in players" :key="player.name" class="w-1/12 border px-2 py-1">{{ player.name }}</th>
+         <tr class="dark:bg-gray-800">
+           <th class="w-1/4 border px-2 py-1 dark:border-gray-600">Category</th>
+           <th v-for="player in players" :key="player.name" class="w-1/12 border px-2 py-1 dark:border-gray-600">
+             {{ player.name }}
+           </th>
          </tr>
        </thead>
        <tbody>
          <!-- Upper section header -->
-         <tr class="bg-blue-100">
-           <td colspan="100%" class="border px-2 py-0.5 font-bold text-blue-800 text-sm">
+         <tr class="bg-blue-100 dark:bg-blue-900">
+           <td colspan="100%" class="border px-2 py-0.5 font-bold text-blue-800 dark:text-blue-200">
              Upper Section
            </td>
          </tr>
@@ -67,14 +69,14 @@
            </td>
          </tr>
          <!-- Upper section sum -->
-         <tr class="bg-blue-50">
+         <tr class="bg-blue-50 dark:bg-blue-900">
            <td class="border px-2 py-0.5 font-bold">Upper Section Sum</td>
            <td v-for="player in players" :key="player.name" class="border px-1 py-0.5 text-center">
              {{ calculateUpperSectionSum(player) }}
            </td>
          </tr>
          <!-- Upper section progress -->
-         <tr class="bg-blue-50">
+         <tr class="bg-blue-50 dark:bg-blue-900">
            <td class="border px-2 py-0.5 font-bold">Progress (+/-)</td>
            <td 
              v-for="player in players" 
@@ -89,15 +91,15 @@
            </td>
          </tr>
          <!-- Bonus -->
-         <tr class="bg-green-100">
+         <tr class="bg-green-100 dark:bg-green-900">
            <td class="border px-2 py-0.5 font-bold">Bonus (if ≥63)</td>
            <td v-for="player in players" :key="player.name" class="border px-1 py-0.5 text-center">
              {{ calculateUpperSectionSum(player) >= 63 ? 50 : 0 }}
            </td>
          </tr>
          <!-- Lower section header -->
-         <tr class="bg-purple-100">
-           <td colspan="100%" class="border px-2 py-0.5 font-bold text-purple-800 text-sm">
+         <tr class="bg-purple-100 dark:bg-purple-900">
+           <td colspan="100%" class="border px-2 py-0.5 font-bold text-purple-800 dark:text-purple-200 text-sm">
              Lower Section
            </td>
          </tr>
@@ -145,14 +147,14 @@
            </td>
          </tr>
          <!-- Add this row just before the final Total Score row -->
-         <tr class="bg-gray-100">
+         <tr class="bg-gray-100 dark:bg-gray-900">
            <td class="border px-2 py-0.5 font-bold">Max Possible</td>
            <td v-for="player in players" :key="player.name" class="border px-1 py-0.5 text-center">
              {{ calculateMaxPossible(player) }}
            </td>
          </tr>
          <!-- Total score -->
-         <tr class="bg-yellow-100 font-bold text-sm">
+         <tr class="bg-yellow-100 font-bold text-sm dark:bg-yellow-900">
            <td class="border px-2 py-0.5">Total Score</td>
            <td v-for="player in players" :key="player.name" class="border px-1 py-0.5 text-center">
              {{ calculateTotalScore(player) }}

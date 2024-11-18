@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'Yatzy Score Manager',
-        short_name: 'Yatzy',
+        name: 'JatsApp',
+        short_name: 'JatsApp',
         description: 'Yatzy score tracking application',
         theme_color: '#ffffff',
         icons: [
