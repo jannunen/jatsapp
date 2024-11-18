@@ -5,10 +5,10 @@
         <thead class="">
           <tr class="dark:bg-gray-800 bg-white">
             <th class="sticky top-0 z-10 w-3/8 md:w-2/12 px-2 py-1 text-left">Category</th>
-            <th v-for="player in playersWithWins" :key="player.name" class="sticky top-0 w-1/12 px-2 py-1">
+            <th v-for="player in playersWithWins" :key="player.name" class="sticky top-0 w-1/12 px-2 py-1 transition-colors duration-300" :class="getPlayerPositionClass(player)">
               <div class="flex flex-col items-center">
                 <span>{{ player.name }}</span>
-                <span v-if="player.wins > 0" class="text-xs text-green-600 dark:text-green-400">
+                <span v-if="player.wins > 0" class="text-xs">
                   {{ player.wins }} {{ player.wins === 1 ? 'win' : 'wins' }}
                 </span>
               </div>
@@ -25,7 +25,7 @@
                 <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
               </div>
             </td>
-            <td v-for="player in props.players" :key="player.name" class="px-1 py-1 text-center">
+            <td v-for="player in props.players" :key="player.name" class="px-1 text-center">
               <div v-if="isEditing(player, category)" class="relative">
                 <div class="flex flex-col gap-0.5">
                   <input
@@ -61,7 +61,8 @@
               <div
                    v-else
                    @click="selectCell(player, category)"
-                   class="min-w-[1.5rem] min-h-[1.5rem] rounded 
+                   class="min-w-[1.5rem] min-h-[1.5rem] rounded  border border-gray-300
+                        dark:border-gray-500
                         flex items-center justify-center cursor-pointer 
                         hover:bg-gray-50 dark:hover:bg-gray-800 text-lg">
                 {{ player.scores[category] !== undefined ? player.scores[category] : '-' }}
@@ -99,13 +100,13 @@
 
           <!-- Lower section -->
           <tr v-for="category in lowerCategories" :key="category">
-            <td class="px-2 py-1">
+            <td class="px-2 ">
               <div class="flex justify-between items-center text-sm">
                 <span>{{ category }}</span>
                 <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
               </div>
             </td>
-            <td v-for="player in props.players" :key="player.name" class="px-1 py-1 text-center">
+            <td v-for="player in props.players" :key="player.name" class="px-1 text-center">
               <div v-if="isEditing(player, category)" class="relative">
                 <div class="flex flex-col gap-0.5">
                   <input
@@ -140,7 +141,8 @@
               <div
                    v-else
                    @click="selectCell(player, category)"
-                   class="min-w-[1.5rem] min-h-[1.5rem] rounded 
+                   class="min-w-[1.5rem] min-h-[1.5rem] rounded  border border-gray-300
+                        dark:border-gray-500
                         flex items-center justify-center cursor-pointer 
                         hover:bg-gray-50 dark:hover:bg-gray-800 text-lg">
                 {{ player.scores[category] !== undefined ? player.scores[category] : '-' }}
@@ -157,7 +159,7 @@
           <!-- Total score -->
           <tr class="bg-yellow-100 font-bold text-sm dark:bg-yellow-900">
             <td class="px-2 py-1">Total Score</td>
-            <td v-for="player in props.players" :key="player.name" class="px-1 py-1 text-center text-lg">
+            <td v-for="player in props.players" :key="player.name" class="px-1 py-1 text-center text-lg transition-colors duration-300" :class="getPlayerPositionClass(player)">
               {{ calculateTotalScore(player) }}
             </td>
           </tr>
@@ -396,6 +398,37 @@
        }));
      });
 
+     const getPlayerPositionClass = (player) => {
+       const scores = props.players.map(p => ({
+         name: p.name,
+         total: calculateTotalScore(p)
+       }));
+       
+       // Sort by score in descending order
+       scores.sort((a, b) => b.total - a.total);
+       
+       // Find position of current player
+       const position = scores.findIndex(p => p.name === player.name);
+       
+       if (scores.length <= 1) return '';
+       
+       // Return color class based on position
+       if (position === 0) {
+         return 'bg-green-100 dark:bg-green-900'; // Leader
+       } else if (position === scores.length - 1) {
+         return 'bg-red-100 dark:bg-red-900'; // Last place
+       } else {
+         // Calculate gradient for middle positions
+         const total = scores.length - 1;
+         const percentage = position / total;
+         if (percentage <= 0.5) {
+           return 'bg-lime-50 dark:bg-lime-900/50'; // Closer to first
+         } else {
+           return 'bg-orange-50 dark:bg-orange-900/50'; // Closer to last
+         }
+       }
+     };
+
      return { 
        upperCategories,
        lowerCategories,
@@ -417,6 +450,7 @@
        formatAverage,
        playersWithWins,
        props,
+       getPlayerPositionClass,
      };
    },
  };
