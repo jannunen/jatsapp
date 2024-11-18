@@ -1,1 +1,1 @@
-if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/yatzy-score-manager/sw.js', { scope: '/yatzy-score-manager/' })})}
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/jatsapp/sw.js', { scope: '/jatsapp/' })})}
