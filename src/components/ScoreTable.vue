@@ -13,8 +13,8 @@
        <table class="w-full border-collapse text-sm">
          <thead>
            <tr class="dark:bg-gray-800">
-             <th class="w-1/8 border-b border-r px-4 py-2 text-left dark:border-gray-600">Category</th>
-             <th v-for="player in players" :key="player.name" class="w-1/12 border-b border-r last:border-r-0 px-4 py-2 dark:border-gray-600">
+             <th class="w-1/8 border-b border-r px-4 py-3 text-left dark:border-gray-600">Category</th>
+             <th v-for="player in players" :key="player.name" class="w-1/12 border-b border-r last:border-r-0 px-4 py-3 dark:border-gray-600">
                {{ player.name }}
              </th>
            </tr>
@@ -22,23 +22,24 @@
          <tbody>
            <!-- Upper section header -->
            <tr class="bg-blue-100 dark:bg-blue-900">
-             <td colspan="100%" class="px-4 py-1 font-bold text-blue-800 dark:text-blue-200">
+             <td colspan="100%" class="px-4 py-2 font-bold text-blue-800 dark:text-blue-200">
                Upper Section
              </td>
            </tr>
            <!-- Upper section -->
            <tr v-for="category in upperCategories" :key="category">
-             <td class="border-b border-r px-4 py-1 dark:border-gray-600">
+             <td class="border-b border-r px-4 py-2.5 dark:border-gray-600">
                <div class="flex justify-between items-center text-sm">
                  <span>{{ category }}</span>
                  <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
                </div>
              </td>
-             <td v-for="player in players" :key="player.name" class="border-b border-r last:border-r-0 px-2 py-1 dark:border-gray-600">
+             <td v-for="player in players" :key="player.name" class="border-b border-r last:border-r-0 px-2 py-2.5 dark:border-gray-600">
                <div v-if="isEditing(player, category)" class="relative">
                  <div class="flex flex-col gap-0.5">
                    <input
                      v-model.number="scoreInput"
+                     inputmode="numeric"
                      id="scoreInput"
                      type="number"
                      class="w-12 border border-gray-300 px-1 py-0.5 rounded text-sm 
@@ -66,9 +67,10 @@
                <div 
                  v-else 
                  @click="selectCell(player, category)" 
-                 class="min-w-[1.5rem] min-h-[1.5rem] border border-gray-300 rounded 
+                 class="min-w-[1.5rem] min-h-[1.5rem] border border-gray-300 rounded py-2 
                         flex items-center justify-center cursor-pointer 
                         hover:bg-gray-50 dark:border-gray-600 
+                        text-lg
                         dark:hover:bg-gray-800"
                >
                  {{ player.scores[category] !== undefined ? player.scores[category] : '-' }}
@@ -78,7 +80,7 @@
            <!-- Upper section sum -->
            <tr class="bg-blue-50 dark:bg-blue-900">
              <td class="border px-2 py-0.5 font-bold">Upper Section Sum</td>
-             <td v-for="player in players" :key="player.name" class="border px-1 py-0.5 text-center">
+             <td v-for="player in players" :key="player.name" class="border px-1 py-0.5 text-center text-lg">
                {{ calculateUpperSectionSum(player) }}
              </td>
            </tr>
@@ -88,7 +90,7 @@
              <td 
                v-for="player in players" 
                :key="player.name" 
-               class="border px-1 py-0.5 text-center"
+               class="border px-1 py-0.5 text-center text-lg"
                :class="{
                  'text-red-600': calculateProgress(player) < 0,
                  'text-green-600': calculateProgress(player) > 0
@@ -100,30 +102,32 @@
            <!-- Bonus -->
            <tr class="bg-green-100 dark:bg-green-900">
              <td class="border px-2 py-0.5 font-bold">Bonus (if ≥63)</td>
-             <td v-for="player in players" :key="player.name" class="border px-1 py-0.5 text-center">
+             <td v-for="player in players" :key="player.name" class="border px-1 py-0.5 text-center text-lg">
                {{ calculateUpperSectionSum(player) >= 63 ? 50 : 0 }}
              </td>
            </tr>
            <!-- Lower section header -->
-           <tr class="bg-purple-100 dark:bg-purple-900">
-             <td colspan="100%" class="border px-2 font-bold text-purple-800 dark:text-purple-200 text-sm py-2">
+           <tr><td colspan="100%">&nbsp;</td></tr>
+           <tr class="bg-purple-100 dark:bg-purple-900 ">
+             <td colspan="100%" class="border px-2 font-bold text-purple-800 dark:text-purple-200 text-sm py-3">
                Lower Section
              </td>
            </tr>
            <!-- Lower section -->
            <tr v-for="category in lowerCategories" :key="category">
-             <td class="border px-2 py-0.5">
+             <td class="border-b border-r px-4 py-2.5 dark:border-gray-600">
                <div class="flex justify-between items-center text-sm">
                  <span>{{ category }}</span>
                  <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
                </div>
              </td>
-             <td v-for="player in players" :key="player.name" class="border px-1 py-1">
+             <td v-for="player in players" :key="player.name" class="border px-1 py-2.5 dark:border-gray-600">
                <div v-if="isEditing(player, category)" class="relative">
                  <div class="flex flex gap-1">
                    <input
                      v-model.number="scoreInput"
                      type="number"
+                     inputmode="numeric"
                      id="scoreInput"
                      class="w-12 border border-gray-300 px-1 py-1 rounded text-sm 
                             dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100 
@@ -151,9 +155,10 @@
                <div 
                  v-else 
                  @click="selectCell(player, category)" 
-                 class="min-w-[1.5rem] min-h-[1.5rem] border border-gray-300 rounded 
+                 class="min-w-[1.5rem] min-h-[1.5rem] border border-gray-300 rounded py-2 
                         flex items-center justify-center cursor-pointer 
                         hover:bg-gray-50 dark:border-gray-600 
+                        text-lg
                         dark:hover:bg-gray-800"
                >
                  {{ player.scores[category] !== undefined ? player.scores[category] : '-' }}
@@ -162,15 +167,15 @@
            </tr>
            <!-- Add this row just before the final Total Score row -->
            <tr class="bg-gray-100 dark:bg-gray-900">
-             <td class="border px-2 py-0.5 font-bold">Max Possible</td>
-             <td v-for="player in players" :key="player.name" class="border px-1 py-0.5 text-center">
+             <td class="border px-2 py-2.5 font-bold">Max Possible</td>
+             <td v-for="player in players" :key="player.name" class="border px-1 py-2.5 text-center text-md">
                {{ calculateMaxPossible(player) }}
              </td>
            </tr>
            <!-- Total score -->
            <tr class="bg-yellow-100 font-bold text-sm dark:bg-yellow-900">
-             <td class="border px-2 py-2">Total Score</td>
-             <td v-for="player in players" :key="player.name" class="border px-1 py-0.5 text-center">
+             <td class="border px-2 py-2.5">Total Score</td>
+             <td v-for="player in players" :key="player.name" class="border px-1 py-0.5 text-center text-lg">
                {{ calculateTotalScore(player) }}
              </td>
            </tr>
@@ -261,6 +266,35 @@
        }
      };
 
+     const validateUpperSectionScore = (category, score) => {
+       if (score === 0) return true;
+       
+       const categoryValues = {
+         'Ones': 1,
+         'Twos': 2,
+         'Threes': 3,
+         'Fours': 4,
+         'Fives': 5,
+         'Sixes': 6
+       };
+
+       const value = categoryValues[category];
+       if (!value) return true; // Not an upper section category
+
+       // Check if score is divisible by the category value
+       if (score % value !== 0) {
+         return false;
+       }
+
+       // Check if score is not higher than possible (5 dice)
+       const maxPossible = value * 5;
+       if (score > maxPossible) {
+         return false;
+       }
+
+       return true;
+     };
+
      const submitScore = (player, category) => {
        if (scoreInput.value == '-') {
          delete(player.scores[category]);
@@ -270,6 +304,13 @@
 
        const score = getDefaultScore(category);
        if (score >= 0) {
+         // Validate upper section scores
+         if (!validateUpperSectionScore(category, score)) {
+           if (!confirm(`Warning: ${score} seems invalid for ${category}. Are you sure?`)) {
+             return;
+           }
+         }
+         
          player.scores[category] = score;
          cancelEdit();
        }
