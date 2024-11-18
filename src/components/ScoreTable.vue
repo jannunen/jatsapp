@@ -1,7 +1,7 @@
  <template>
   <div>
     <div class="rounded-lg overflow-x-auto">
-      <div class="max-h-[80vh] overflow-y-auto">
+      <div class="max-h-[80vh] overflow-y-auto relative">
         <table class="w-full text-sm relative">
           <thead class="sticky top-0 z-20">
             <tr class="dark:bg-gray-800 bg-white">
@@ -102,6 +102,25 @@
               </td>
             </tr>
           </tbody>
+          <tfoot class="sticky bottom-0 z-20">
+            <tr class="bg-gray-100 dark:bg-gray-800">
+              <td class="sticky left-0 z-30 px-2 py-1 font-bold bg-inherit">Theoretical</td>
+              <td v-for="player in props.players" :key="player.name" class="px-1 text-center text-md">
+                {{ calculateMaxPossible(player) }}
+              </td>
+            </tr>
+            <tr class="bg-yellow-100 font-bold text-sm dark:bg-yellow-900">
+              <td class="sticky left-0 z-30 px-2 py-1 bg-inherit">Total Score</td>
+              <td 
+                v-for="player in props.players" 
+                :key="player.name" 
+                class="px-1 py-1 text-center text-md transition-colors duration-300" 
+                :class="getPlayerPositionClass(player)"
+              >
+                {{ calculateTotalScore(player) }}
+              </td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
