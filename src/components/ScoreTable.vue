@@ -26,40 +26,8 @@
               </div>
             </td>
             <td v-for="player in props.players" :key="player.name" class="px-1 text-center">
-              <div v-if="isEditing(player, category)" class="relative">
-                <div class="flex flex-col gap-0.5">
-                  <input
-                         v-model.number="scoreInput"
-                         @keydown.enter="submitScore(player, category)"
-                         type="text"
-                         inputmode="numeric"
-                         id="scoreInput"
-                         class="w-12 border border-gray-300 px-1 rounded text-sm 
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100 
-                            dark:focus:border-blue-500 dark:placeholder-gray-400
-                            dark:[color-scheme:dark]"
-                         ref="scoreInputRef" />
-                  <div class="flex gap-0.5">
-                    <button
-                            @click="submitScore(player, category)"
-                            class="bg-green-500 hover:bg-green-600 text-white text-xs px-1 py-1 rounded">
-                      OK
-                    </button>
-                    <button
-                            @click="clearScore(player, category)"
-                            class="bg-orange-500 hover:bg-orange-600 text-white text-xs px-1 py-1 rounded">
-                      C
-                    </button>
-                    <button
-                            @click="cancelEdit"
-                            class="bg-red-500 hover:bg-red-600 text-white text-xs px-1 rounded">
-                      X
-                    </button>
-                  </div>
-                </div>
-              </div>
+              
               <div
-                   v-else
                    @click="selectCell(player, category)"
                    class="min-w-[1.5rem] min-h-[1.5rem] rounded  border border-gray-300
                         dark:border-gray-500
@@ -107,39 +75,8 @@
               </div>
             </td>
             <td v-for="player in props.players" :key="player.name" class="px-1 text-center">
-              <div v-if="isEditing(player, category)" class="relative">
-                <div class="flex flex-col gap-0.5">
-                  <input
-                         v-model.number="scoreInput"
-                         type="text"
-                         inputmode="numeric"
-                         id="scoreInput"
-                         class="w-12 border border-gray-300 px-1 rounded text-sm 
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100 
-                            dark:focus:border-blue-500 dark:placeholder-gray-400
-                            dark:[color-scheme:dark]"
-                         ref="scoreInputRef" />
-                  <div class="flex gap-0.5">
-                    <button
-                            @click="submitScore(player, category)"
-                            class="bg-green-500 hover:bg-green-600 text-white text-xs px-1 py-1 rounded">
-                      OK
-                    </button>
-                    <button
-                            @click="clearScore(player, category)"
-                            class="bg-orange-500 hover:bg-orange-600 text-white text-xs px-1 py-1 rounded">
-                      C
-                    </button>
-                    <button
-                            @click="cancelEdit"
-                            class="bg-red-500 hover:bg-red-600 text-white text-xs px-1 py-1 rounded">
-                      X
-                    </button>
-                  </div>
-                </div>
-              </div>
+              
               <div
-                   v-else
                    @click="selectCell(player, category)"
                    class="min-w-[1.5rem] min-h-[1.5rem] rounded  border border-gray-300
                         dark:border-gray-500
@@ -166,14 +103,68 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Point Entry Modal -->
+    <Modal 
+      :show="!!editingPlayer" 
+      :title="`Enter points for ${editingCategory}`"
+    >
+      <div class="flex flex-col gap-4">
+        <div class="text-sm dark:text-gray-300">
+          Player: {{ editingPlayer?.name }}
+        </div>
+        <input
+          v-model.number="scoreInput"
+          type="text"
+          inputmode="numeric"
+          class="w-full border border-gray-300 px-3 py-2 rounded text-lg 
+                 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+          ref="scoreInputRef"
+          id="modalScoreInput"
+          @keyup.enter="submitScore(editingPlayer, editingCategory)"
+          autofocus
+        />
+      </div>
+      
+      <template #actions>
+        <button 
+          @click="skipScore(editingPlayer, editingCategory)"
+          class="px-4 py-2 text-sm bg-orange-500 text-white rounded hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700"
+        >
+          Skip
+        </button>
+        <button 
+          @click="clearScore(editingPlayer, editingCategory)"
+          class="px-4 py-2 text-sm bg-orange-500 text-white rounded hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700"
+        >
+          Clear
+        </button>
+        <button 
+          @click="cancelEdit"
+          class="px-4 py-2 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700"
+        >
+          Cancel
+        </button>
+        <button 
+          @click="submitScore(editingPlayer, editingCategory)"
+          class="px-4 py-2 text-sm bg-green-500 text-white rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
+        >
+          Save
+        </button>
+      </template>
+    </Modal>
   </div>
 </template>
 
  <script>
  import { ref, nextTick, computed } from 'vue';
  import { useScoreStats } from '../composables/useScoreStats';
+ import Modal from './Modal.vue';
 
  export default {
+   components: {
+     Modal
+   },
    props: {
      players: Array,
    },
@@ -219,33 +210,30 @@
        if (player.scores[category] !== undefined) {
          scoreInput.value = player.scores[category];
        } else {
-         scoreInput.value = 0;
+         scoreInput.value = getDefaultScore(category);
        }
        
        editingPlayer.value = player;
        editingCategory.value = category;
        
-       // Wait for the input to be rendered
-       nextTick();
-       if (scoreInputRef.value) {
-         setTimeout(() => {
-           document.getElementById('scoreInput').focus();
-           document.getElementById('scoreInput').select();
-           // Change text color to blue
-           document.getElementById('scoreInput').style.color = 'blue';
-           document.getElementById('scoreInput').click();
-         }, 100);
-       }
+       nextTick().then(() => {
+         document.getElementById('modalScoreInput').focus()
+         document.getElementById('modalScoreInput').select()
+         // Change text color to blue
+         document.getElementById('modalScoreInput').style.color = 'blue'
+         document.getElementById('modalScoreInput').click()
+       })
      };
 
      const getDefaultScore = (category) => {
-       if (scoreInput.value === 0) return 0;
        
        switch (category) {
          case 'Small Straight':
-           return scoreInput.value || 15;
+           return  15;
          case 'Large Straight':
-           return scoreInput.value || 20;
+           return  20;
+         case 'Yahtzee':
+           return 50;
          default:
            return scoreInput.value;
        }
@@ -285,6 +273,11 @@
        cancelEdit();
      };
 
+     const skipScore = (player, category) => {  
+      scoreInput.value = '0';
+      submitScore(player, category);
+     };
+
      const submitScore = (player, category) => {
        if (scoreInput.value == '-') {
          delete(player.scores[category]);
@@ -292,16 +285,15 @@
          return;
        }
 
-       const score = getDefaultScore(category);
-       if (score >= 0) {
+       if (scoreInput.value >= 0) {
          // Validate upper section scores
-         if (!validateUpperSectionScore(category, score)) {
-           if (!confirm(`Warning: ${score} seems invalid for ${category}. Are you sure?`)) {
+         if (!validateUpperSectionScore(category, scoreInput.value)) {
+           if (!confirm(`Warning: ${scoreInput.value} seems invalid for ${category}. Are you sure?`)) {
              return;
            }
          }
          
-         player.scores[category] = score;
+         player.scores[category] = scoreInput.value;
          cancelEdit();
        }
      };
@@ -439,6 +431,7 @@
        isEditing, 
        selectCell, 
        submitScore,
+       skipScore,
        clearScore,
        calculateUpperSectionSum,
        calculateTotalScore,
