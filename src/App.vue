@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen transition-colors duration-200 dark:bg-gray-900 dark:text-white">
-    <div class="container mx-auto px-2 py-2 max-w-3xl">
+  <div class="min-h-screen transition-colors duration-200 dark:bg-gray-900 dark:text-white flex flex-col">
+    <div class="container mx-auto px-2 py-2 max-w-3xl flex-grow">
       <div class="flex justify-between items-center mb-1">
         <div class="w-10">
         </div>
@@ -22,6 +22,20 @@
       </div>
       <router-view></router-view>
     </div>
+
+    <!-- Footer -->
+    <footer class="mt-8 py-4 border-t border-gray-200 dark:border-gray-700">
+      <div class="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
+        <p class="mb-2">
+          Made with 🤖 (Claude) and ❤️ | No data leaves your device
+        </p>
+        <p class="text-xs italic">
+          "In Yatzy, as in life, it's not about the rolls you get, but how you use them."
+          <br>
+          - Ancient Dice Wisdom (probably)
+        </p>
+      </div>
+    </footer>
   </div>
 </template>
 
