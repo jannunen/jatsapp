@@ -3,9 +3,9 @@
     <div class="rounded-lg overflow-x-auto">
       <div class="max-h-[80vh] overflow-y-auto">
         <table class="w-full text-sm relative">
-          <thead class="sticky top-0 z-10">
+          <thead class="sticky top-0 z-20">
             <tr class="dark:bg-gray-800 bg-white">
-              <th class="w-4/12 md:w-2/12 px-2 py-1 text-left">Category</th>
+              <th class="sticky left-0 z-30 w-4/12 md:w-2/12 px-2 py-1 text-left bg-inherit">Category</th>
               <th v-for="player in playersWithWins" :key="player.name" class="w-1/12 px-2 py-1 transition-colors duration-300" :class="getPlayerPositionClass(player)">
                 <div class="flex flex-col items-center">
                   <span>{{ player.name }}</span>
@@ -20,7 +20,7 @@
 
             <!-- Upper section -->
             <tr v-for="category in upperCategories" :key="category">
-              <td class="px-2 py-1">
+              <td class="sticky left-0 z-10 px-2 py-1 bg-white dark:bg-gray-900">
                 <div class="flex justify-between items-center text-sm">
                   <span>{{ category }}</span>
                   <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
@@ -40,14 +40,14 @@
             </tr>
             <!-- Upper section sum -->
             <tr class="bg-blue-50 dark:bg-blue-900">
-              <td class="px-2 py-0.5 font-bold"> Sum</td>
+              <td class="sticky left-0 z-10 px-2 py-0.5 font-bold bg-inherit"> Sum</td>
               <td v-for="player in props.players" :key="player.name" class="px-1 text-center text-lg">
                 {{ calculateUpperSectionSum(player) }}
               </td>
             </tr>
             <!-- Upper section progress -->
             <tr class="bg-blue-50 dark:bg-blue-900">
-              <td class="px-2 font-bold">(+/-)</td>
+              <td class="sticky left-0 z-10 px-2 font-bold bg-inherit">(+/-)</td>
               <td
                   v-for="player in props.players"
                   :key="player.name"
@@ -61,7 +61,7 @@
             </tr>
             <!-- Bonus -->
             <tr class="bg-green-100 dark:bg-green-900">
-              <td class=" px-2 font-bold">Bonus </td>
+              <td class="sticky left-0 z-10 px-2 font-bold bg-inherit">Bonus </td>
               <td v-for="player in props.players" :key="player.name" class=" px-1 text-center text-md">
                 {{ calculateUpperSectionSum(player) >= 63 ? 50 : 0 }}
               </td>
@@ -69,7 +69,7 @@
 
             <!-- Lower section -->
             <tr v-for="category in lowerCategories" :key="category">
-              <td class="px-2 ">
+              <td class="sticky left-0 z-10 px-2 bg-white dark:bg-gray-900">
                 <div class="flex justify-between items-center text-sm">
                   <span>{{ category }}</span>
                   <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
@@ -89,14 +89,14 @@
             </tr>
             <!-- Add this row just before the final Total Score row -->
             <tr class="bg-gray-100 dark:bg-gray-900">
-              <td class="px-2 py-1 font-bold">Theoretical</td>
+              <td class="sticky left-0 z-10 px-2 py-1 font-bold bg-inherit">Theoretical</td>
               <td v-for="player in props.players" :key="player.name" class="px-1 text-center text-md">
                 {{ calculateMaxPossible(player) }}
               </td>
             </tr>
             <!-- Total score -->
             <tr class="bg-yellow-100 font-bold text-sm dark:bg-yellow-900">
-              <td class="px-2 py-1">Total Score</td>
+              <td class="sticky left-0 z-10 px-2 py-1 bg-inherit">Total Score</td>
               <td v-for="player in props.players" :key="player.name" class="px-1 py-1 text-center text-md transition-colors duration-300" :class="getPlayerPositionClass(player)">
                 {{ calculateTotalScore(player) }}
               </td>
