@@ -242,11 +242,13 @@
      };
 
      const getDefaultScore = (category) => {
+       if (scoreInput.value === 0) return 0;
+       
        switch (category) {
          case 'Small Straight':
-           return 15;
+           return scoreInput.value || 15;
          case 'Large Straight':
-           return 20;
+           return scoreInput.value || 20;
          default:
            return scoreInput.value;
        }
