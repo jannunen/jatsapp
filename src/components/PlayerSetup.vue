@@ -5,7 +5,7 @@
           @click="resetGame"
           class="mb-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
         >
-          Aloita uusi peli
+        Start a new game
         </button>
         <h2 class="text-xl mb-2">Add Players</h2>
         <input v-model="playerName" placeholder="Enter player name" class="border p-2 mb-2" />
