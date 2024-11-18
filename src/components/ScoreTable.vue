@@ -1,107 +1,109 @@
  <template>
   <div>
-    <div class="rounded-lg overflow-x-auto relative">
-      <table class="w-full text-sm">
-        <thead class="">
-          <tr class="dark:bg-gray-800 bg-white">
-            <th class="sticky top-0 z-10 w-3/8 md:w-2/12 px-2 py-1 text-left">Category</th>
-            <th v-for="player in playersWithWins" :key="player.name" class="sticky top-0 w-1/12 px-2 py-1 transition-colors duration-300" :class="getPlayerPositionClass(player)">
-              <div class="flex flex-col items-center">
-                <span>{{ player.name }}</span>
-                <span v-if="player.wins > 0" class="text-xs">
-                  {{ player.wins }} {{ player.wins === 1 ? 'win' : 'wins' }}
-                </span>
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+    <div class="rounded-lg overflow-x-auto">
+      <div class="max-h-[80vh] overflow-y-auto">
+        <table class="w-full text-sm relative">
+          <thead class="sticky top-0 z-10">
+            <tr class="dark:bg-gray-800 bg-white">
+              <th class="w-4/12 md:w-2/12 px-2 py-1 text-left">Category</th>
+              <th v-for="player in playersWithWins" :key="player.name" class="w-1/12 px-2 py-1 transition-colors duration-300" :class="getPlayerPositionClass(player)">
+                <div class="flex flex-col items-center">
+                  <span>{{ player.name }}</span>
+                  <span v-if="player.wins > 0" class="text-xs">
+                    {{ player.wins }} {{ player.wins === 1 ? 'win' : 'wins' }}
+                  </span>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
 
-          <!-- Upper section -->
-          <tr v-for="category in upperCategories" :key="category">
-            <td class="px-2 py-1">
-              <div class="flex justify-between items-center text-sm">
-                <span>{{ category }}</span>
-                <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
-              </div>
-            </td>
-            <td v-for="player in props.players" :key="player.name" class="px-1 text-center">
-              
-              <div
-                   @click="selectCell(player, category)"
-                   class="min-w-[1.5rem] min-h-[1.5rem] rounded  border border-gray-300
-                        dark:border-gray-500
-                        flex items-center justify-center cursor-pointer 
-                        hover:bg-gray-50 dark:hover:bg-gray-800 text-lg">
-                {{ player.scores[category] !== undefined ? player.scores[category] : '-' }}
-              </div>
-            </td>
-          </tr>
-          <!-- Upper section sum -->
-          <tr class="bg-blue-50 dark:bg-blue-900">
-            <td class="px-2 py-0.5 font-bold"> Sum</td>
-            <td v-for="player in props.players" :key="player.name" class="px-1 text-center text-lg">
-              {{ calculateUpperSectionSum(player) }}
-            </td>
-          </tr>
-          <!-- Upper section progress -->
-          <tr class="bg-blue-50 dark:bg-blue-900">
-            <td class="px-2 font-bold">(+/-)</td>
-            <td
-                v-for="player in props.players"
-                :key="player.name"
-                class=" px-1 text-center text-lg"
-                :class="{
-                 'text-red-600': calculateProgress(player) < 0,
-                 'text-green-600': calculateProgress(player) > 0
-               }">
-              {{ formatProgress(calculateProgress(player)) }}
-            </td>
-          </tr>
-          <!-- Bonus -->
-          <tr class="bg-green-100 dark:bg-green-900">
-            <td class=" px-2 font-bold">Bonus </td>
-            <td v-for="player in props.players" :key="player.name" class=" px-1 text-center text-lg">
-              {{ calculateUpperSectionSum(player) >= 63 ? 50 : 0 }}
-            </td>
-          </tr>
+            <!-- Upper section -->
+            <tr v-for="category in upperCategories" :key="category">
+              <td class="px-2 py-1">
+                <div class="flex justify-between items-center text-sm">
+                  <span>{{ category }}</span>
+                  <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
+                </div>
+              </td>
+              <td v-for="player in props.players" :key="player.name" class="px-1 text-center">
+                
+                <div
+                     @click="selectCell(player, category)"
+                     class="min-w-[1.5rem] min-h-[1.5rem] rounded  border border-gray-300
+                            dark:border-gray-500
+                            flex items-center justify-center cursor-pointer 
+                            hover:bg-gray-50 dark:hover:bg-gray-800 text-lg">
+                  {{ player.scores[category] !== undefined ? player.scores[category] : '-' }}
+                </div>
+              </td>
+            </tr>
+            <!-- Upper section sum -->
+            <tr class="bg-blue-50 dark:bg-blue-900">
+              <td class="px-2 py-0.5 font-bold"> Sum</td>
+              <td v-for="player in props.players" :key="player.name" class="px-1 text-center text-lg">
+                {{ calculateUpperSectionSum(player) }}
+              </td>
+            </tr>
+            <!-- Upper section progress -->
+            <tr class="bg-blue-50 dark:bg-blue-900">
+              <td class="px-2 font-bold">(+/-)</td>
+              <td
+                  v-for="player in props.players"
+                  :key="player.name"
+                  class=" px-1 text-center text-md"
+                  :class="{
+                   'text-red-600': calculateProgress(player) < 0,
+                   'text-green-600': calculateProgress(player) > 0
+                 }">
+                {{ formatProgress(calculateProgress(player)) }}
+              </td>
+            </tr>
+            <!-- Bonus -->
+            <tr class="bg-green-100 dark:bg-green-900">
+              <td class=" px-2 font-bold">Bonus </td>
+              <td v-for="player in props.players" :key="player.name" class=" px-1 text-center text-md">
+                {{ calculateUpperSectionSum(player) >= 63 ? 50 : 0 }}
+              </td>
+            </tr>
 
-          <!-- Lower section -->
-          <tr v-for="category in lowerCategories" :key="category">
-            <td class="px-2 ">
-              <div class="flex justify-between items-center text-sm">
-                <span>{{ category }}</span>
-                <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
-              </div>
-            </td>
-            <td v-for="player in props.players" :key="player.name" class="px-1 text-center">
-              
-              <div
-                   @click="selectCell(player, category)"
-                   class="min-w-[1.5rem] min-h-[1.5rem] rounded  border border-gray-300
-                        dark:border-gray-500
-                        flex items-center justify-center cursor-pointer 
-                        hover:bg-gray-50 dark:hover:bg-gray-800 text-lg">
-                {{ player.scores[category] !== undefined ? player.scores[category] : '-' }}
-              </div>
-            </td>
-          </tr>
-          <!-- Add this row just before the final Total Score row -->
-          <tr class="bg-gray-100 dark:bg-gray-900">
-            <td class="px-2 py-1 font-bold">Max Possible</td>
-            <td v-for="player in props.players" :key="player.name" class="px-1 text-center text-md">
-              {{ calculateMaxPossible(player) }}
-            </td>
-          </tr>
-          <!-- Total score -->
-          <tr class="bg-yellow-100 font-bold text-sm dark:bg-yellow-900">
-            <td class="px-2 py-1">Total Score</td>
-            <td v-for="player in props.players" :key="player.name" class="px-1 py-1 text-center text-lg transition-colors duration-300" :class="getPlayerPositionClass(player)">
-              {{ calculateTotalScore(player) }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            <!-- Lower section -->
+            <tr v-for="category in lowerCategories" :key="category">
+              <td class="px-2 ">
+                <div class="flex justify-between items-center text-sm">
+                  <span>{{ category }}</span>
+                  <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
+                </div>
+              </td>
+              <td v-for="player in props.players" :key="player.name" class="px-1 text-center">
+                
+                <div
+                     @click="selectCell(player, category)"
+                     class="min-w-[1.5rem] min-h-[1.5rem] rounded  border border-gray-300
+                            dark:border-gray-500
+                            flex items-center justify-center cursor-pointer 
+                            hover:bg-gray-50 dark:hover:bg-gray-800 text-lg">
+                  {{ player.scores[category] !== undefined ? player.scores[category] : '-' }}
+                </div>
+              </td>
+            </tr>
+            <!-- Add this row just before the final Total Score row -->
+            <tr class="bg-gray-100 dark:bg-gray-900">
+              <td class="px-2 py-1 font-bold">Theoretical</td>
+              <td v-for="player in props.players" :key="player.name" class="px-1 text-center text-md">
+                {{ calculateMaxPossible(player) }}
+              </td>
+            </tr>
+            <!-- Total score -->
+            <tr class="bg-yellow-100 font-bold text-sm dark:bg-yellow-900">
+              <td class="px-2 py-1">Total Score</td>
+              <td v-for="player in props.players" :key="player.name" class="px-1 py-1 text-center text-md transition-colors duration-300" :class="getPlayerPositionClass(player)">
+                {{ calculateTotalScore(player) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Point Entry Modal -->
