@@ -40,8 +40,9 @@
                    v-model.number="scoreInput"
                    type="number"
                    class="w-12 border border-gray-300 px-1 py-0.5 rounded text-sm 
-                          dark:bg-gray-700 dark:border-gray-600 dark:text-white 
-                          dark:focus:border-blue-500 dark:placeholder-gray-400"
+                          dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100 
+                          dark:focus:border-blue-500 dark:placeholder-gray-400
+                          dark:[color-scheme:dark]"
                    ref="scoreInputRef"
                    @focus="$event.target.select()"
                  />
@@ -123,8 +124,9 @@
                    v-model.number="scoreInput"
                    type="number"
                    class="w-12 border border-gray-300 px-1 py-0.5 rounded text-sm 
-                          dark:bg-gray-700 dark:border-gray-600 dark:text-white 
-                          dark:focus:border-blue-500 dark:placeholder-gray-400"
+                          dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100 
+                          dark:focus:border-blue-500 dark:placeholder-gray-400
+                          dark:[color-scheme:dark]"
                    ref="scoreInputRef"
                    @focus="$event.target.select()"
                  />

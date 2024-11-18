@@ -8,7 +8,7 @@
         Start a new game
         </button>
         <h2 class="text-xl mb-2">Add Players</h2>
-        <input v-model="playerName" placeholder="Enter player name" class="border p-2 mb-2" />
+        <input v-model="playerName" placeholder="Enter player name" class="border p-2 mb-2 bg-gray-800" />
         <button @click="addPlayer" class="bg-blue-500 text-white px-4 py-2">Add Player</button>
         <ul class="mt-2">
           <li v-for="player in playerNames" :key="player">{{ player }}</li>
