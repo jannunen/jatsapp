@@ -1,48 +1,48 @@
 <template>
   <div class="mt-8 mb-4">
-    <h3 class="text-lg font-bold mb-2">Average Scores</h3>
+    <h3 class="text-lg font-bold mb-2 text-gray-800 dark:text-gray-200">Average Scores</h3>
     <table class="w-full border-collapse border">
       <thead>
-        <tr class="bg-gray-50">
-          <th class="border px-4 py-2 text-left">Category</th>
-          <th class="border px-4 py-2 text-right">Average</th>
-          <th class="border px-4 py-2 text-right">Games</th>
+        <tr class="bg-gray-50 dark:bg-gray-700">
+          <th class="border px-4 py-2 text-left text-gray-800 dark:text-gray-200">Category</th>
+          <th class="border px-4 py-2 text-right text-gray-800 dark:text-gray-200">Average</th>
+          <th class="border px-4 py-2 text-right text-gray-800 dark:text-gray-200">Games</th>
         </tr>
       </thead>
       <tbody>
         <!-- Upper section -->
-        <tr class="bg-blue-50">
-          <td colspan="3" class="border px-4 py-1 font-bold">Upper Section</td>
+        <tr class="bg-blue-50 dark:bg-gray-800">
+          <td colspan="3" class="border px-4 py-1 font-bold text-gray-800 dark:text-gray-200">Upper Section</td>
         </tr>
         <tr v-for="category in upperCategories" :key="category">
-          <td class="border px-4 py-1">{{ category }}</td>
-          <td class="border px-4 py-1 text-right">
+          <td class="border px-4 py-1 text-gray-800 dark:text-gray-200">{{ category }}</td>
+          <td class="border px-4 py-1 text-right text-gray-800 dark:text-gray-200">
             {{ formatAverage(getAverageForCategory(category)) }}
           </td>
-          <td class="border px-4 py-1 text-right">
+          <td class="border px-4 py-1 text-right text-gray-800 dark:text-gray-200">
             {{ getCategoryUsageCount(category) }}
           </td>
         </tr>
         <!-- Lower section -->
-        <tr class="bg-purple-50">
-          <td colspan="3" class="border px-4 py-1 font-bold">Lower Section</td>
+        <tr class="bg-purple-50 dark:bg-gray-800">
+          <td colspan="3" class="border px-4 py-1 font-bold text-gray-800 dark:text-gray-200">Lower Section</td>
         </tr>
         <tr v-for="category in lowerCategories" :key="category">
-          <td class="border px-4 py-1">{{ category }}</td>
-          <td class="border px-4 py-1 text-right">
+          <td class="border px-4 py-1 text-gray-800 dark:text-gray-200">{{ category }}</td>
+          <td class="border px-4 py-1 text-right text-gray-800 dark:text-gray-200">
             {{ formatAverage(getAverageForCategory(category)) }}
           </td>
-          <td class="border px-4 py-1 text-right">
+          <td class="border px-4 py-1 text-right text-gray-800 dark:text-gray-200">
             {{ getCategoryUsageCount(category) }}
           </td>
         </tr>
         <!-- Total -->
-        <tr class="bg-yellow-50 font-bold">
-          <td class="border px-4 py-1">Average Total</td>
-          <td class="border px-4 py-1 text-right">
+        <tr class="bg-yellow-50 font-bold dark:bg-gray-800">
+          <td class="border px-4 py-1 text-gray-800 dark:text-gray-200">Average Total</td>
+          <td class="border px-4 py-1 text-right text-gray-800 dark:text-gray-200">
             {{ formatAverage(getAverageTotalScore()) }}
           </td>
-          <td class="border px-4 py-1 text-right">
+          <td class="border px-4 py-1 text-right text-gray-800 dark:text-gray-200">
             {{ games.length }}
           </td>
         </tr>
