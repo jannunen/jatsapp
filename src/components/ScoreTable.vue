@@ -1,173 +1,174 @@
  <template>
-   <div>
-     <div class="rounded-lg overflow-x-auto relative">
-       <table class="w-full text-sm">
-         <thead class="sticky top-0 z-10">
-           <tr class="dark:bg-gray-800 bg-white">
-             <th class="w-1/8 px-2 py-1 text-left">Category</th>
-             <th v-for="player in players" :key="player.name" class="w-1/12 px-2 py-1">
-               {{ player.name }}
-             </th>
-           </tr>
-         </thead>
-         <tbody>
-           
-           <!-- Upper section -->
-           <tr v-for="category in upperCategories" :key="category">
-             <td class="px-2 py-1">
-               <div class="flex justify-between items-center text-sm">
-                 <span>{{ category }}</span>
-                 <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
-               </div>
-             </td>
-             <td v-for="player in players" :key="player.name" class="px-1 py-1 text-center">
-               <div v-if="isEditing(player, category)" class="relative">
-                 <div class="flex flex-col gap-0.5">
-                   <input
-                     v-model.number="scoreInput"
-                     type="number"
-                     inputmode="numeric"
-                     id="scoreInput"
-                     class="w-12 border border-gray-300 px-1 rounded text-sm 
+  <div>
+    <div class="rounded-lg overflow-x-auto relative">
+      <table class="w-full text-sm">
+        <thead class="">
+          <tr class="dark:bg-gray-800 bg-white">
+            <th class="sticky top-0 z-10 w-3/8 md:w-2/12 px-2 py-1 text-left">Category</th>
+            <th v-for="player in playersWithWins" :key="player.name" class="sticky top-0 w-1/12 px-2 py-1">
+              <div class="flex flex-col items-center">
+                <span>{{ player.name }}</span>
+                <span v-if="player.wins > 0" class="text-xs text-green-600 dark:text-green-400">
+                  {{ player.wins }} {{ player.wins === 1 ? 'win' : 'wins' }}
+                </span>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Upper section -->
+          <tr v-for="category in upperCategories" :key="category">
+            <td class="px-2 py-1">
+              <div class="flex justify-between items-center text-sm">
+                <span>{{ category }}</span>
+                <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
+              </div>
+            </td>
+            <td v-for="player in props.players" :key="player.name" class="px-1 py-1 text-center">
+              <div v-if="isEditing(player, category)" class="relative">
+                <div class="flex flex-col gap-0.5">
+                  <input
+                         v-model.number="scoreInput"
+                         @keydown.enter="submitScore(player, category)"
+                         type="text"
+                         inputmode="numeric"
+                         id="scoreInput"
+                         class="w-12 border border-gray-300 px-1 rounded text-sm 
                             dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100 
                             dark:focus:border-blue-500 dark:placeholder-gray-400
                             dark:[color-scheme:dark]"
-                     ref="scoreInputRef"
-                   />
-                   <div class="flex gap-0.5">
-                     <button 
-                       @click="submitScore(player, category)"
-                       class="bg-green-500 hover:bg-green-600 text-white text-xs px-1 rounded"
-                     >
-                       OK
-                     </button>
-                     <button 
-                       @click="clearScore(player, category)"
-                       class="bg-orange-500 hover:bg-orange-600 text-white text-xs px-1 rounded"
-                     >
+                         ref="scoreInputRef" />
+                  <div class="flex gap-0.5">
+                    <button
+                            @click="submitScore(player, category)"
+                            class="bg-green-500 hover:bg-green-600 text-white text-xs px-1 py-1 rounded">
+                      OK
+                    </button>
+                    <button
+                            @click="clearScore(player, category)"
+                            class="bg-orange-500 hover:bg-orange-600 text-white text-xs px-1 py-1 rounded">
                       C
-                     </button>
-                     <button 
-                       @click="cancelEdit"
-                       class="bg-red-500 hover:bg-red-600 text-white text-xs px-1 rounded"
-                     >
-                       X
-                     </button>
-                   </div>
-                 </div>
-               </div>
-               <div 
-                 v-else 
-                 @click="selectCell(player, category)" 
-                 class="min-w-[1.5rem] min-h-[1.5rem] rounded 
+                    </button>
+                    <button
+                            @click="cancelEdit"
+                            class="bg-red-500 hover:bg-red-600 text-white text-xs px-1 rounded">
+                      X
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div
+                   v-else
+                   @click="selectCell(player, category)"
+                   class="min-w-[1.5rem] min-h-[1.5rem] rounded 
                         flex items-center justify-center cursor-pointer 
-                        hover:bg-gray-50 dark:hover:bg-gray-800 text-lg"
-               >
-                 {{ player.scores[category] !== undefined ? player.scores[category] : '-' }}
-               </div>
-             </td>
-           </tr>
-           <!-- Upper section sum -->
-           <tr class="bg-blue-50 dark:bg-blue-900">
-             <td class="px-2 py-0.5 font-bold">Upper Section Sum</td>
-             <td v-for="player in players" :key="player.name" class="px-1 text-center text-lg">
-               {{ calculateUpperSectionSum(player) }}
-             </td>
-           </tr>
-           <!-- Upper section progress -->
-           <tr class="bg-blue-50 dark:bg-blue-900">
-             <td class="px-2 font-bold">Progress (+/-)</td>
-             <td 
-               v-for="player in players" 
-               :key="player.name" 
-               class=" px-1 text-center text-lg"
-               :class="{
+                        hover:bg-gray-50 dark:hover:bg-gray-800 text-lg">
+                {{ player.scores[category] !== undefined ? player.scores[category] : '-' }}
+              </div>
+            </td>
+          </tr>
+          <!-- Upper section sum -->
+          <tr class="bg-blue-50 dark:bg-blue-900">
+            <td class="px-2 py-0.5 font-bold"> Sum</td>
+            <td v-for="player in props.players" :key="player.name" class="px-1 text-center text-lg">
+              {{ calculateUpperSectionSum(player) }}
+            </td>
+          </tr>
+          <!-- Upper section progress -->
+          <tr class="bg-blue-50 dark:bg-blue-900">
+            <td class="px-2 font-bold">(+/-)</td>
+            <td
+                v-for="player in props.players"
+                :key="player.name"
+                class=" px-1 text-center text-lg"
+                :class="{
                  'text-red-600': calculateProgress(player) < 0,
                  'text-green-600': calculateProgress(player) > 0
-               }"
-             >
-               {{ formatProgress(calculateProgress(player)) }}
-             </td>
-           </tr>
-           <!-- Bonus -->
-           <tr class="bg-green-100 dark:bg-green-900">
-             <td class=" px-2 font-bold">Bonus (if ≥63)</td>
-             <td v-for="player in players" :key="player.name" class=" px-1 text-center text-lg">
-               {{ calculateUpperSectionSum(player) >= 63 ? 50 : 0 }}
-             </td>
-           </tr>
-           
-           <!-- Lower section -->
-           <tr v-for="category in lowerCategories" :key="category">
-             <td class="px-2 py-1">
-               <div class="flex justify-between items-center text-sm">
-                 <span>{{ category }}</span>
-                 <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
-               </div>
-             </td>
-             <td v-for="player in players" :key="player.name" class="px-1 py-1 text-center">
-               <div v-if="isEditing(player, category)" class="relative">
-                 <div class="flex flex-col gap-0.5">
-                   <input
-                     v-model.number="scoreInput"
-                     type="number"
-                     inputmode="numeric"
-                     id="scoreInput"
-                     class="w-12 border border-gray-300 px-1 rounded text-sm 
+               }">
+              {{ formatProgress(calculateProgress(player)) }}
+            </td>
+          </tr>
+          <!-- Bonus -->
+          <tr class="bg-green-100 dark:bg-green-900">
+            <td class=" px-2 font-bold">Bonus </td>
+            <td v-for="player in props.players" :key="player.name" class=" px-1 text-center text-lg">
+              {{ calculateUpperSectionSum(player) >= 63 ? 50 : 0 }}
+            </td>
+          </tr>
+
+          <!-- Lower section -->
+          <tr v-for="category in lowerCategories" :key="category">
+            <td class="px-2 py-1">
+              <div class="flex justify-between items-center text-sm">
+                <span>{{ category }}</span>
+                <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
+              </div>
+            </td>
+            <td v-for="player in props.players" :key="player.name" class="px-1 py-1 text-center">
+              <div v-if="isEditing(player, category)" class="relative">
+                <div class="flex flex-col gap-0.5">
+                  <input
+                         v-model.number="scoreInput"
+                         type="text"
+                         inputmode="numeric"
+                         id="scoreInput"
+                         class="w-12 border border-gray-300 px-1 rounded text-sm 
                             dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100 
                             dark:focus:border-blue-500 dark:placeholder-gray-400
                             dark:[color-scheme:dark]"
-                     ref="scoreInputRef"
-                   />
-                   <div class="flex gap-0.5">
-                     <button 
-                       @click="submitScore(player, category)"
-                       class="bg-green-500 hover:bg-green-600 text-white text-xs px-1 rounded"
-                     >
-                       OK
-                     </button>
-                     <button 
-                       @click="cancelEdit"
-                       class="bg-red-500 hover:bg-red-600 text-white text-xs px-1 rounded"
-                     >
-                       X
-                     </button>
-                   </div>
-                 </div>
-               </div>
-               <div 
-                 v-else 
-                 @click="selectCell(player, category)" 
-                 class="min-w-[1.5rem] min-h-[1.5rem] rounded 
+                         ref="scoreInputRef" />
+                  <div class="flex gap-0.5">
+                    <button
+                            @click="submitScore(player, category)"
+                            class="bg-green-500 hover:bg-green-600 text-white text-xs px-1 py-1 rounded">
+                      OK
+                    </button>
+                    <button
+                            @click="clearScore(player, category)"
+                            class="bg-orange-500 hover:bg-orange-600 text-white text-xs px-1 py-1 rounded">
+                      C
+                    </button>
+                    <button
+                            @click="cancelEdit"
+                            class="bg-red-500 hover:bg-red-600 text-white text-xs px-1 py-1 rounded">
+                      X
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div
+                   v-else
+                   @click="selectCell(player, category)"
+                   class="min-w-[1.5rem] min-h-[1.5rem] rounded 
                         flex items-center justify-center cursor-pointer 
-                        hover:bg-gray-50 dark:hover:bg-gray-800 text-lg"
-               >
-                 {{ player.scores[category] !== undefined ? player.scores[category] : '-' }}
-               </div>
-             </td>
-           </tr>
-           <!-- Add this row just before the final Total Score row -->
-           <tr class="bg-gray-100 dark:bg-gray-900">
-             <td class="px-2 py-1 font-bold">Max Possible</td>
-             <td v-for="player in players" :key="player.name" class="px-1 text-center text-md">
-               {{ calculateMaxPossible(player) }}
-             </td>
-           </tr>
-           <!-- Total score -->
-           <tr class="bg-yellow-100 font-bold text-sm dark:bg-yellow-900">
-             <td class="px-2 py-1">Total Score</td>
-             <td v-for="player in players" :key="player.name" class="px-1 py-1 text-center text-lg">
-               {{ calculateTotalScore(player) }}
-             </td>
-           </tr>
-         </tbody>
-       </table>
-     </div>
-   </div>
- </template>
+                        hover:bg-gray-50 dark:hover:bg-gray-800 text-lg">
+                {{ player.scores[category] !== undefined ? player.scores[category] : '-' }}
+              </div>
+            </td>
+          </tr>
+          <!-- Add this row just before the final Total Score row -->
+          <tr class="bg-gray-100 dark:bg-gray-900">
+            <td class="px-2 py-1 font-bold">Max Possible</td>
+            <td v-for="player in props.players" :key="player.name" class="px-1 text-center text-md">
+              {{ calculateMaxPossible(player) }}
+            </td>
+          </tr>
+          <!-- Total score -->
+          <tr class="bg-yellow-100 font-bold text-sm dark:bg-yellow-900">
+            <td class="px-2 py-1">Total Score</td>
+            <td v-for="player in props.players" :key="player.name" class="px-1 py-1 text-center text-lg">
+              {{ calculateTotalScore(player) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
 
  <script>
- import { ref, nextTick } from 'vue';
+ import { ref, nextTick, computed } from 'vue';
  import { useScoreStats } from '../composables/useScoreStats';
 
  export default {
@@ -175,10 +176,10 @@
      players: Array,
    },
    emits: ['reset-scores'],
-   setup() {
+   setup(props) {
      const upperCategories = ['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes'];
      const lowerCategories = [
-       'One Pair', 'Two Pairs', 'Three of a Kind', 'Four of a Kind', 
+       '1 Pair', '2 Pairs', '3 of a Kind', '4 of a Kind', 
        'Full House', 'Small Straight', 'Large Straight', 'Yahtzee', 'Chance'
      ];
 
@@ -383,6 +384,18 @@
 
      const { getAverageForCategory, formatAverage } = useScoreStats();
 
+     const getPlayerWins = (playerName) => {
+       const history = JSON.parse(localStorage.getItem('yatzyGameHistory') || '[]');
+       return history.filter(game => game.winner === playerName).length;
+     };
+
+     const playersWithWins = computed(() => {
+       return props.players.map(player => ({
+         ...player,
+         wins: getPlayerWins(player.name)
+       }));
+     });
+
      return { 
        upperCategories,
        lowerCategories,
@@ -402,6 +415,8 @@
        calculateMaxPossible,
        getAverageForCategory,
        formatAverage,
+       playersWithWins,
+       props,
      };
    },
  };
