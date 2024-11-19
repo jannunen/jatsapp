@@ -48,6 +48,8 @@
     </div>
 
     <div class="space-y-4">
+      <TopScores v-if="hasHistory" />
+
       <button
         @click="startNewGame"
         class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg font-bold text-lg dark:bg-green-600 dark:hover:bg-green-700"
@@ -87,6 +89,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import ScoreHistory from '../components/ScoreHistory.vue';
 import ScoreStats from '../components/ScoreStats.vue';
+import TopScores from '../components/TopScores.vue';
 
 const router = useRouter();
 const hasSavedGame = ref(false);

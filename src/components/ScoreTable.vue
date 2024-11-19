@@ -279,7 +279,7 @@
      players: Array,
    },
    emits: ['reset-scores', 'remove-player'],
-   setup(props, ctx) {
+   setup(props, { emit }) {
      const upperCategories = ['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes'];
      const lowerCategories = [
        'One Pair', 'Two Pairs', 'Three of a Kind', 'Four of a Kind', 
@@ -553,11 +553,10 @@
      };
 
      const removePlayer = (player) => {
-       playerToRemove.value = player;
+       emit('remove-player', player);
      };
 
      const confirmRemovePlayer = () => {
-       ctx.emit('remove-player', playerToRemove.value);
        playerToRemove.value = null;
      };
 

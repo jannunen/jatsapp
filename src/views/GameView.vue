@@ -18,6 +18,12 @@
         >
           Cancel Game
         </button>
+        <button 
+          @click="pauseGame" 
+          class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded dark:bg-blue-600 dark:hover:bg-blue-700"
+        >
+          Main Menu
+        </button>
       </div>
     </div>
   </div>
@@ -33,7 +39,12 @@ const router = useRouter();
 const players = ref([]);
 const gameStarted = ref(false);
 const removePlayer = (player) => {
-  players.value = players.value.filter(p => p.name !== player.name);
+  if (confirm(`Are you sure you want to remove ${player.name}? All scores will be lost.`)) {
+    const index = players.value.findIndex(p => p === player);
+    if (index !== -1) {
+      players.value.splice(index, 1);
+    }
+  }
 };
 
 onMounted(() => {
@@ -109,5 +120,10 @@ const cancelGame = () => {
     localStorage.removeItem('yatzyGameState');
     router.push('/');
   }
+};
+
+const pauseGame = () => {
+  // Game state is already saved by the watcher
+  router.push('/');
 };
 </script> 

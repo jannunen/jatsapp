@@ -8,13 +8,37 @@
         Start a new game
         </button>
 
-        <div v-if="previousPlayers.length > 0 && playerNames.length === 0" class="mb-4">
+        <div v-if="historicPlayers.length > 0 && playerNames.length === 0" class="mb-4 space-y-2">
           <button
+            v-if="previousPlayers.length > 0"
             @click="usePreviousPlayers"
-            class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded dark:bg-blue-600 dark:hover:bg-blue-700 mb-2"
+            class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded dark:bg-blue-600 dark:hover:bg-blue-700"
           >
-            Use previous players: {{ previousPlayers.join(', ') }}
+            Use last game players: {{ previousPlayers.join(', ') }}
           </button>
+
+          <div class="relative">
+            <select 
+              v-model="selectedHistoricGame"
+              class="w-full bg-gray-100 border border-gray-300 px-4 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+            >
+              <option value="">Select from historic games...</option>
+              <option 
+                v-for="(game, index) in historicGames" 
+                :key="index" 
+                :value="index"
+              >
+                {{ formatGameOption(game) }}
+              </option>
+            </select>
+            <button 
+              v-if="selectedHistoricGame !== ''"
+              @click="useHistoricPlayers"
+              class="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded dark:bg-blue-600 dark:hover:bg-blue-700"
+            >
+              Use selected players
+            </button>
+          </div>
         </div>
 
         <h2 class="text-xl mb-2">Add Players</h2>
@@ -68,7 +92,7 @@
     </template>
     
     <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref, onMounted, computed } from 'vue';
     import { useRouter } from 'vue-router';
     
     const router = useRouter();
@@ -78,18 +102,36 @@
     const playerNames = ref([]);
     const savedGameExists = ref(false);
     const previousPlayers = ref([]);
+    const historicGames = ref([]);
+    const selectedHistoricGame = ref('');
+    
+    const historicPlayers = computed(() => {
+      const allPlayers = new Set();
+      historicGames.value.forEach(game => {
+        game.players.forEach(player => {
+          allPlayers.add(player.name);
+        });
+      });
+      return Array.from(allPlayers);
+    });
     
     onMounted(() => {
       const savedState = localStorage.getItem('yatzyGameState');
       savedGameExists.value = !!savedState;
     
-      const lastGame = JSON.parse(localStorage.getItem('yatzyGameHistory') || '[]')
-        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
-      
-      if (lastGame) {
-        previousPlayers.value = lastGame.players.map(p => p.name);
+      historicGames.value = JSON.parse(localStorage.getItem('yatzyGameHistory') || '[]')
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    
+      if (historicGames.value.length > 0) {
+        previousPlayers.value = historicGames.value[0].players.map(p => p.name);
       }
     });
+    
+    const formatGameOption = (game) => {
+      const date = new Date(game.timestamp).toLocaleDateString();
+      const players = game.players.map(p => p.name).join(', ');
+      return `${date}: ${players}`;
+    };
     
     const resetGame = () => {
       localStorage.removeItem('yatzyGameState');
@@ -98,6 +140,13 @@
     
     const usePreviousPlayers = () => {
       playerNames.value = [...previousPlayers.value];
+    };
+    
+    const useHistoricPlayers = () => {
+      const selectedGame = historicGames.value[selectedHistoricGame.value];
+      if (selectedGame) {
+        playerNames.value = selectedGame.players.map(p => p.name);
+      }
     };
     
     const addPlayer = () => {
