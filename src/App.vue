@@ -4,7 +4,7 @@
       <div class="flex justify-between items-center mb-1">
         <div class="w-10">
         </div>
-        <router-link to="/" class="text-xl sm:text-2xl font-bold">JatsApp</router-link>
+        <router-link to="/" class="text-xl sm:text-2xl font-bold">JatsApp <small class="text-xs text-gray-500 dark:text-gray-400">v{{  version }}</small></router-link>
         <button 
           @click="toggleTheme" 
           class="p-1.5 sm:p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 w-10"
@@ -32,10 +32,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref , computed} from 'vue';
 import { useTheme } from './composables/useTheme';
 import PrivacyPolicy from './components/PrivacyPolicy.vue';
 
+const version = computed(() => import.meta.env.VITE_APP_VERSION);
 const { isDark, toggleTheme } = useTheme();
 const showPrivacy = ref(false);
 </script>

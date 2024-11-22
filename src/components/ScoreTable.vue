@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex justify-around items-center mb-2">
+    <div class="flex justify-around items-center mb-1">
       
 
         <button 
@@ -41,8 +41,8 @@
         <table class="w-full text-sm relative">
           <thead class="sticky top-0 z-20">
             <tr class="dark:bg-gray-800 bg-white">
-              <th class="w-4/12 md:w-2/12 px-2 py-1 text-left bg-inherit">Category</th>
-              <th v-for="player in playersWithWins" :key="player.name" class="w-1/12 px-2 py-1 transition-colors duration-300" :class="getPlayerPositionClass(player)">
+              <th class="w-4/12 md:w-2/12 px-2 py-0 text-left bg-inherit">Category</th>
+              <th v-for="player in playersWithWins" :key="player.name" class="w-1/12 px-2 py-0 transition-colors duration-300" :class="getPlayerPositionClass(player)">
                 <div class="flex flex-col items-center">
                   <div class="flex items-center gap-1">
                     <span>{{ player.name }}</span>
@@ -66,13 +66,13 @@
                   </span>
                 </div>
               </th>
-              <th class="w-4/12 md:w-2/12 px-2 py-1 text-left bg-inherit">Category</th>
+              <th class="w-4/12 md:w-2/12 px-2 py-0 text-left bg-inherit">Category</th>
             </tr>
           </thead>
           <tbody>
             <!-- Upper section -->
             <tr v-for="category in upperCategories" :key="category">
-              <td class="px-2 py-1 bg-white dark:bg-gray-900">
+              <td class="px-2 py-0 bg-white dark:bg-gray-900">
                 <div class="flex justify-between items-center text-sm">
                   <span>{{ category }}</span>
                   <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
@@ -91,7 +91,7 @@
                 </div>
               </td>
               <!-- Right side category -->
-              <td class="px-2 py-1 bg-white dark:bg-gray-900">
+              <td class="px-2  bg-white dark:bg-gray-900">
                 <div class="flex justify-between items-center text-sm">
                   <span>{{ category }}</span>
                   <span class="text-xs text-gray-500">({{ formatAverage(getAverageForCategory(category)) }})</span>
@@ -154,19 +154,19 @@
           <tfoot class="sticky bottom-0 z-20">
             <!-- Theoretical max -->
             <tr class="bg-gray-100 dark:bg-gray-800">
-              <td class="px-2 py-1 font-bold bg-inherit">Theoretical</td>
+              <td class="px-2  font-bold bg-inherit">Theoretical</td>
               <td v-for="player in players" :key="player.name" class="px-1 text-center text-md">
                 {{ calculateMaxPossible(player) }}
               </td>
-              <td class="px-2 py-1 font-bold bg-inherit">Theoretical</td>
+              <td class="px-2 font-bold bg-inherit">Theoretical</td>
             </tr>
             <!-- Total score -->
             <tr class="bg-yellow-100 font-bold text-sm dark:bg-yellow-900">
-              <td class="px-2 py-1 bg-inherit">Total Score</td>
-              <td v-for="player in players" :key="player.name" class="px-1 py-1 text-center text-md transition-colors duration-300" :class="getPlayerPositionClass(player)">
+              <td class="px-2  bg-inherit">Total Score</td>
+              <td v-for="player in players" :key="player.name" class="px-1  text-center text-md transition-colors duration-300" :class="getPlayerPositionClass(player)">
                 {{ calculateTotalScore(player) }}
               </td>
-              <td class="px-2 py-1 bg-inherit">Total Score</td>
+              <td class="px-2  bg-inherit">Total Score</td>
             </tr>
           </tfoot>
         </table>
@@ -211,9 +211,10 @@
         </button>
         <button 
           @click="submitScore(editingPlayer, editingCategory)"
+          :disabled="savingScore"
           class="px-4 py-2 text-sm bg-green-500 text-white rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
         >
-          Save
+          {{ savingScore ? 'Saving...' : 'Save' }}
         </button>
       </template>
     </Modal>
@@ -296,6 +297,7 @@ import { useRouter } from 'vue-router';
 import { supabase } from '../lib/supabase';
 
 const router = useRouter();
+const savingScore = ref(false);
 
 const props = defineProps<{
   players: Player[];
@@ -448,6 +450,7 @@ interface OtherPlayer {
 }
 
 const updateSharedScores = async () => {
+
   // Get all active shares
   const { data: shares } = await supabase
     .from('shared_scores')
@@ -484,8 +487,9 @@ const updateSharedScores = async () => {
 };
 
 const submitScore = async (player: Player, category: string) => {
-  if (scoreInput.value === 0 || scoreInput.value) {
-    const score = getDefaultScore(category);
+  savingScore.value = true;
+  const score = scoreInput.value;
+  if (score === 0 || score) {
     if (score >= 0) {
       // Validate upper section scores
       if (!validateUpperSectionScore(category, score)) {
@@ -500,11 +504,13 @@ const submitScore = async (player: Player, category: string) => {
       await updateSharedScores();
 
       cancelEdit();
+      savingScore.value = false;
     }
   } else {
     delete(player.scores[category]);
     await updateSharedScores();
     cancelEdit();
+    savingScore.value = false;
   }
 };
 

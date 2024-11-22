@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-md mx-auto p-4">
     <div class="mb-8 text-center">
-      <h1 class="text-2xl font-bold mb-4">Welcome to JatsApp!</h1>
+      <h1 class="text-2xl font-bold mb-4">Welcome to JatsApp! </h1>
       <p class="text-gray-600 dark:text-gray-300 mb-2">
         A modern Yatzy score tracker that works offline and saves your game history.
       </p>
@@ -107,7 +107,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import ScoreHistory from '../components/ScoreHistory.vue';
 import ScoreStats from '../components/ScoreStats.vue';
