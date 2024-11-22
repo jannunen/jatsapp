@@ -12,6 +12,12 @@ const getDeviceId = (): string => {
 };
 
 export const backupService = {
+  async deleteBackup(backupId: string) {
+    const { error } = await supabase
+      .from('game_backups')
+      .delete()
+      .eq('id', backupId);
+  },
   // Backup all game data
   async backupGames(description?: string) {
     const deviceId = getDeviceId();

@@ -24,12 +24,20 @@
                 {{ backup.description }}
               </div>
             </div>
-            <button 
-              @click="restore(backup.id)"
-              class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm"
-            >
-              Restore
-            </button>
+            <div class="flex gap-2">
+              <button 
+                @click="restore(backup.id)"
+                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm"
+              >
+                Restore
+              </button>
+              <button
+                @click="deleteBackup(backup.id)" 
+                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -50,6 +58,17 @@ const loadBackups = async () => {
     console.error('Failed to load backups:', error);
   }
 };
+
+const deleteBackup = async (backupId: string) => {
+  if (confirm('Are you sure you want to delete this backup?')) {
+    try {
+      await backupService.deleteBackup(backupId);
+      await loadBackups();
+    } catch (error) {
+      console.error('Failed to delete backup:', error);
+    }
+  }
+};  
 
 const createBackup = async () => {
   const description = prompt('Add a description for this backup (optional):');
