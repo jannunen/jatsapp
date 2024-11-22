@@ -41,28 +41,46 @@
         </div>
       </div>
       
-      <div v-if="playerData.other_players?.length" class="mt-6">
-        <h3 class="text-lg font-bold mb-2">Other Players</h3>
-        <div class="space-y-2">
-          <div v-for="otherPlayer in playerData.other_players" :key="otherPlayer.name"
-               class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded">
-            <span>{{ otherPlayer.name }}</span>
-            <span class="font-bold">{{ otherPlayer.total }}</span>
-          </div>
-        </div>
-      </div>
-      
       <div class="text-sm text-gray-500 dark:text-gray-400 text-center">
         Last updated: {{ new Date(playerData.updated_at).toLocaleString() }}
       </div>
     </div>
     
     <div v-else class="text-center text-gray-500 dark:text-gray-400">Loading scores...</div>
+    
+    <!-- Current Standings -->
+    <div v-if="playerData && playerData.other_players?.length" class="mt-6">
+      <h3 class="text-lg font-bold mb-2">Current Standings</h3>
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow space-y-2">
+        <div v-for="(player, index) in standings" :key="player.name"
+             class="flex items-center justify-between p-2 rounded"
+             :class="{
+               'bg-yellow-50 dark:bg-yellow-900/50': index === 0,
+               'bg-gray-50 dark:bg-gray-700': index !== 0
+             }"
+        >
+          <div class="flex items-center gap-2">
+            <span class="text-lg">
+              {{ ['🥇', '🥈', '🥉'][index] || (index + 1) }}
+            </span>
+            <span :class="{ 'font-bold': player.name === playerData.player_name }">
+              {{ player.name }}
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold">{{ player.total }}</span>
+            <span v-if="index > 0" class="text-sm text-gray-500">
+              (-{{ standings[0].total - player.total }})
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { supabase } from '../lib/supabase';
 
 interface GameHistory {
@@ -80,6 +98,17 @@ interface SharedScore {
   game_history: GameHistory[];
   updated_at: string;
   other_players: OtherPlayer[];
+}
+
+interface OtherPlayer {
+  name: string;
+  scores: Record<string, number>;
+  total: number;
+}
+
+interface Standing {
+  name: string;
+  total: number;
 }
 
 const upperSection = {
@@ -102,6 +131,26 @@ const getUpperSectionSum = () => {
   return Object.entries(upperSection).reduce((sum, [category]) => 
     sum + (playerData.value?.scores[category] || 0), 0);
 };
+
+// Computed property for standings
+const standings = computed<Standing[]>(() => {
+  if (!playerData.value) return [];
+
+  // Combine main player and other players
+  const allPlayers = [
+    {
+      name: playerData.value.player_name,
+      total: playerData.value.total
+    },
+    ...playerData.value.other_players.map(p => ({
+      name: p.name,
+      total: p.total
+    }))
+  ];
+
+  // Sort by total score in descending order
+  return allPlayers.sort((a, b) => b.total - a.total);
+});
 
 onMounted(async () => {
   const shareId = new URLSearchParams(window.location.search).get('id');

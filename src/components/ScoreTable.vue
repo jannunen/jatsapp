@@ -286,7 +286,8 @@
     </Modal>
 
     <PlayerShare 
-      :show="playerToShare !== null"
+      v-if="playerToShare != null"
+      :show="playerToShare != null"
       :player="playerToShare"
       :players="props.players"
       @close="playerToShare = null"

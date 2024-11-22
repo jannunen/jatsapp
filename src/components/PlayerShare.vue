@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import QRCode from 'qrcode.vue';
 import { supabase } from '../lib/supabase';
 
@@ -150,8 +150,8 @@ const copyUrl = async () => {
 };
 
 // Watch for show prop changes to reinitialize share when modal opens
-watch(() => props.show, (newValue) => {
-  if (newValue && props.player) {
+watchEffect(() => {
+  if (props.show && props.player) {
     initShare();
   }
 });
