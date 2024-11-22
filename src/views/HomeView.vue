@@ -12,6 +12,8 @@
         <p>✓ Works offline</p>
         <p>✓ Share scores with friends and update them in real-time</p>
         <p>✓ No cookies, no trackers</p>
+        <p>✓ Backup and restore your game data, check privacy policy for more info</p>
+        <p>* If you like the app, you can donate ETH to <a href="https://etherscan.io/address/0xdBeF8b4da833CC5257335f706d0070981A01eF69" target="_blank" class="text-blue-500 hover:text-blue-600 dark:text-blue-400 underline">0xdBeF8b4da833CC5257335f706d0070981A01eF69</a></p>
       </div>
 
       <!-- Game Info Section -->
@@ -85,6 +87,9 @@
     <div class="mt-8 border-t pt-8 dark:border-gray-700">
       <h2 class="text-xl font-bold mb-4">Backup & Restore</h2>
       <BackupManager />
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-4">
+        As Leisuresuit Larry would say: "Save early, save often!"
+      </p>
     </div>
   </div>
 
