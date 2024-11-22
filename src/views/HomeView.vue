@@ -10,6 +10,8 @@
         <p>✓ Track player statistics</p>
         <p>✓ View game history</p>
         <p>✓ Works offline</p>
+        <p>✓ Share scores with friends and update them in real-time</p>
+        <p>✓ No cookies, no trackers</p>
       </div>
 
       <!-- Game Info Section -->

@@ -9,26 +9,7 @@
         @reset-scores="resetScores"
         @remove-player="removePlayer"
       />
-      <div class="mt-4 flex gap-2">
-        <button 
-          @click="endGame" 
-          class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded dark:bg-red-600 dark:hover:bg-red-700"
-        >
-          End Game
-        </button>
-        <button 
-          @click="cancelGame" 
-          class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded dark:bg-gray-600 dark:hover:bg-gray-700"
-        >
-          Cancel Game
-        </button>
-        <button 
-          @click="pauseGame" 
-          class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded dark:bg-blue-600 dark:hover:bg-blue-700"
-        >
-          Main Menu
-        </button>
-      </div>
+      
     </div>
   </div>
 </template>
@@ -112,22 +93,4 @@ const saveGameHistory = () => {
   localStorage.setItem('yatzyGameHistory', JSON.stringify(gameHistory));
 };
 
-const endGame = () => {
-  if (confirm('Are you sure you want to end the game? This will save the results and reset all scores.')) {
-    saveGameHistory();
-    localStorage.removeItem('yatzyGameState');
-    router.push('/');
-  }
-};
-
-const cancelGame = () => {
-  if (confirm('Are you sure you want to cancel the game? All progress will be lost.')) {
-    localStorage.removeItem('yatzyGameState');
-    router.push('/');
-  }
-};
-
-const pauseGame = () => {
-  router.push('/');
-};
 </script> 

@@ -98,14 +98,6 @@
                 </div>
               </td>
             </tr>
-            <!-- Upper section sum -->
-            <tr class="bg-blue-50 dark:bg-blue-900">
-              <td class="px-2 font-bold bg-inherit">Sum</td>
-              <td v-for="player in players" :key="player.name" class="px-1 text-center ">
-                {{ calculateUpperSectionSum(player) }}
-              </td>
-              <td class="px-2 font-bold bg-inherit">Sum</td>
-            </tr>
             <!-- Upper section progress -->
             <tr class="bg-blue-50 dark:bg-blue-900">
               <td class="px-2 font-bold bg-inherit">(+/-)</td>
