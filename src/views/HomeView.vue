@@ -101,8 +101,11 @@
       </div>
     </footer>
 
-
-
+    <!-- Add backup section -->
+    <div class="mt-8 border-t pt-8 dark:border-gray-700">
+      <h2 class="text-xl font-bold mb-4">Backup & Restore</h2>
+      <BackupManager />
+    </div>
   </div>
 </template>
 
@@ -112,6 +115,7 @@ import { useRouter } from 'vue-router';
 import ScoreHistory from '../components/ScoreHistory.vue';
 import ScoreStats from '../components/ScoreStats.vue';
 import TopScores from '../components/TopScores.vue';
+import BackupManager from '../components/BackupManager.vue';
 
 const router = useRouter();
 const hasSavedGame = ref(false);
