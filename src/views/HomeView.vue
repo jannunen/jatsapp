@@ -79,27 +79,7 @@
         <ScoreHistory />
       </div>
     </div>
-    <!-- Footer -->
-    <footer class="mt-8 py-4 border-t border-gray-200 dark:border-gray-700">
-      <div class="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p class="mb-2">
-          From a slave of Yatzy to slaves of Yatzy
-          <br />
-          We don't use cookies, we don't use trackers. See our
-          <button
-                  @click="showPrivacy = true"
-                  class="text-blue-500 hover:text-blue-600 dark:text-blue-400 ml-2 underline">
-            privacy Policy
-          </button>
-          for more info.
-        </p>
-        <p class="text-xs italic">
-          "In Yatzy, as in life, it's not about the rolls you get, but how you use them."
-          <br>
-          - Ancient Dice Wisdom (probably)
-        </p>
-      </div>
-    </footer>
+
 
     <!-- Add backup section -->
     <div class="mt-8 border-t pt-8 dark:border-gray-700">
@@ -107,42 +87,69 @@
       <BackupManager />
     </div>
   </div>
+
+  <footer class="mt-8 py-4 border-t border-gray-200 dark:border-gray-700">
+    <div class="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
+      <p class="mb-2">
+        From a slave of Yatzy to slaves of Yatzy
+        <br />
+        We don't use cookies, we don't use trackers. See our
+        <button
+                @click="showPrivacy = true"
+                class="text-blue-500 hover:text-blue-600 dark:text-blue-400 ml-2 underline">
+          privacy Policy
+        </button>
+        for more info.
+      </p>
+      <p class="text-xs italic">
+        "In Yatzy, as in life, it's not about the rolls you get, but how you use them."
+        <br>
+        - Ancient Dice Wisdom (probably)
+      </p>
+    </div>
+  </footer>
+    <PrivacyPolicy 
+      :show="showPrivacy" 
+      @close="showPrivacy = false" 
+    />
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import ScoreHistory from '../components/ScoreHistory.vue';
-import ScoreStats from '../components/ScoreStats.vue';
-import TopScores from '../components/TopScores.vue';
-import BackupManager from '../components/BackupManager.vue';
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import ScoreHistory from '../components/ScoreHistory.vue'
+import ScoreStats from '../components/ScoreStats.vue'
+import TopScores from '../components/TopScores.vue'
+import BackupManager from '../components/BackupManager.vue'
+import PrivacyPolicy from '../components/PrivacyPolicy.vue';
 
-const router = useRouter();
-const hasSavedGame = ref(false);
-const hasHistory = ref(false);
-const showHistory = ref(false);
-const showRules = ref(false);
+const router = useRouter()
+const hasSavedGame = ref(false)
+const hasHistory = ref(false)
+const showHistory = ref(false)
+const showRules = ref(false)
+const showPrivacy = ref(false)
 
 onMounted(() => {
-  const savedState = localStorage.getItem('yatzyGameState');
-  hasSavedGame.value = !!savedState;
+  const savedState = localStorage.getItem('yatzyGameState')
+  hasSavedGame.value = !!savedState
 
-  const history = JSON.parse(localStorage.getItem('yatzyGameHistory') || '[]');
-  hasHistory.value = history.length > 0;
-});
+  const history = JSON.parse(localStorage.getItem('yatzyGameHistory') || '[]')
+  hasHistory.value = history.length > 0
+})
 
 const startNewGame = () => {
   if (hasSavedGame.value) {
     if (confirm('Do you want to start a new game? Current game progress will be lost.')) {
-      localStorage.removeItem('yatzyGameState');
-      router.push('/game');
+      localStorage.removeItem('yatzyGameState')
+      router.push('/game')
     }
   } else {
-    router.push('/game');
+    router.push('/game')
   }
-};
+}
 
 const continueGame = () => {
-  router.push('/game');
-};
-</script> 
+  router.push('/game')
+}
+</script>

@@ -11,22 +11,40 @@
           
           <div class="space-y-4 text-gray-600 dark:text-gray-300">
             <section>
-              <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Data Storage</h3>
+              <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Local Data Storage</h3>
               <ul class="list-disc pl-5 space-y-1">
-                <li>All game data is stored locally on your device using browser's localStorage</li>
-                <li>No personal data is collected or tracked, except for the score sharing, which is optional, see below.</li>
+                <li>Game data is primarily stored locally on your device using browser's localStorage</li>
+                <li>No personal data is collected or tracked</li>
                 <li>Game history remains on your device until you clear it</li>
+              </ul>
+            </section>
+
+            <section>
+              <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Cloud Backups</h3>
+              <ul class="list-disc pl-5 space-y-1">
+                <li>Optional backup feature stores your game data on our servers</li>
+                <li>Backups include:
+                  <ul class="list-circle pl-5 mt-1">
+                    <li>Game history</li>
+                    <li>Player names</li>
+                    <li>Scores</li>
+                    <li>Optional backup descriptions</li>
+                  </ul>
+                </li>
+                <li>Each device gets a unique anonymous ID</li>
+                <li>You can delete your backups at any time</li>
+                <li>Backups are stored securely using Supabase</li>
               </ul>
             </section>
 
             <section>
               <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Score Sharing</h3>
               <ul class="list-disc pl-5 space-y-1">
-                <li>When sharing scores, only the following data is stored on our server:
+                <li>When sharing scores, only game-related data is stored:
                   <ul class="list-circle pl-5 mt-1">
-                    <li>Player name</li>
+                    <li>Player names</li>
                     <li>Game scores</li>
-                    <li>Timestamp</li>
+                    <li>Timestamps</li>
                   </ul>
                 </li>
                 <li>Shared scores are automatically deleted after 24 hours</li>
@@ -35,17 +53,12 @@
             </section>
 
             <section>
-              <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Cookies & Storage</h3>
+              <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Data Security</h3>
               <ul class="list-disc pl-5 space-y-1">
-                <li>This app uses localStorage to save:
-                  <ul class="list-circle pl-5 mt-1">
-                    <li>Current game state</li>
-                    <li>Game history</li>
-                    <li>Theme preference (light/dark)</li>
-                  </ul>
-                </li>
-                <li>No third-party cookies are used</li>
-                <li>No tracking cookies are implemented</li>
+                <li>All server communication is encrypted using HTTPS</li>
+                <li>Backups are only accessible with your device ID</li>
+                <li>No passwords or personal information are stored</li>
+                <li>Data is hosted in EU-based servers</li>
               </ul>
             </section>
 
@@ -53,8 +66,8 @@
               <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Your Rights</h3>
               <ul class="list-disc pl-5 space-y-1">
                 <li>You can clear all local data using browser settings</li>
-                <li>You can delete game history within the app</li>
-                <li>You can request deletion of shared scores</li>
+                <li>You can delete your backups within the app</li>
+                <li>You can request deletion of all your data</li>
                 <li>No data is shared with third parties</li>
               </ul>
             </section>
@@ -62,7 +75,7 @@
             <section>
               <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Contact</h3>
               <p>For any privacy-related questions or data deletion requests, please contact:</p>
-              <p class="font-medium mt-1">privacy@jatsapp.example.com</p>
+              <p class="font-medium mt-1">jatsapp@annunen.fi</p>
             </section>
           </div>
 

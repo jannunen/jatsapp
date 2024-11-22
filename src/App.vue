@@ -24,21 +24,15 @@
     </div>
 
 
-    <PrivacyPolicy 
-      :show="showPrivacy" 
-      @close="showPrivacy = false" 
-    />
   </div>
 </template>
 
 <script setup>
 import { ref , computed} from 'vue';
 import { useTheme } from './composables/useTheme';
-import PrivacyPolicy from './components/PrivacyPolicy.vue';
 
 const version = computed(() => import.meta.env.VITE_APP_VERSION);
 const { isDark, toggleTheme } = useTheme();
-const showPrivacy = ref(false);
 </script>
 
 <style>
