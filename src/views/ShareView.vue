@@ -11,7 +11,6 @@
                class="flex justify-between items-center py-1 border-b dark:border-gray-700">
             <span>{{ category }}</span>
             <span v-if="playerData.scores[category]" 
-                  :class="{'text-green-600 dark:text-green-400': playerData.scores[category] === maxScore}"
                   class="font-bold">
               {{ playerData.scores[category] }}
             </span>
@@ -23,7 +22,10 @@
               <span>Bonus</span>
               <span class="text-xs text-gray-500 ml-2">(if sum ≥ 63)</span>
             </div>
-            <div class="font-bold">{{ getUpperSectionSum() >= 63 ? '+50' : `${getUpperSectionSum()}/63` }}</div>
+            <div class="font-bold">
+              <span>{{ getUpperSectionSum() >= 63 ? '+50' : `${getUpperSectionSum()}/63` }}</span>
+              <span class="text-sm text-gray-500 ml-2">({{ formatProgress(calculateProgress()) }})</span>
+            </div>
           </div>
         </div>
         
@@ -32,7 +34,6 @@
                class="flex justify-between items-center py-1 border-b dark:border-gray-700">
             <span>{{ category }}</span>
             <span v-if="playerData.scores[category]" 
-                  :class="{'text-green-600 dark:text-green-400': playerData.scores[category] === maxScore}"
                   class="font-bold">
               {{ playerData.scores[category] }}
             </span>
@@ -130,6 +131,33 @@ const getUpperSectionSum = () => {
   if (!playerData.value) return 0;
   return Object.entries(upperSection).reduce((sum, [category]) => 
     sum + (playerData.value?.scores[category] || 0), 0);
+};
+
+const calculateProgress = () => {
+  if (!playerData.value) return 0;
+  let totalExpected = 0;
+  
+  // For each category in upper section
+  Object.entries(upperSection).forEach(([category, maxScore], index) => {
+    const number = index + 1; // 1 for Ones, 2 for Twos, etc.
+    
+    const score = playerData.value?.scores[category];
+    if (score !== undefined && !isNaN(parseInt(score.toString()))) {
+      // If category is filled, use actual score
+      totalExpected += parseInt(score.toString());
+    } else {
+      // If empty, expect 3 dice of that number
+      totalExpected += number * 3;
+    }
+  });
+  
+  // Compare with target 63
+  return totalExpected - 63;
+};
+
+const formatProgress = (progress: number) => {
+  if (progress > 0) return `+${progress}`;
+  return progress.toString();
 };
 
 // Computed property for standings
