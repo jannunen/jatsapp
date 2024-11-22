@@ -437,6 +437,23 @@ const skipScore = (player, category) => {
   submitScore(player, category);
 };
 
+interface Score {
+  value: number;
+  timestamp: string;
+}
+
+interface Player {
+  name: string;
+  scores: Record<string, number>;
+  total: number;
+}
+
+interface OtherPlayer {
+  name: string;
+  scores: Record<string, number>;
+  total: number;
+}
+
 const updateSharedScores = async () => {
   // Get all active shares
   const { data: shares } = await supabase
@@ -448,13 +465,24 @@ const updateSharedScores = async () => {
 
   // Update each shared player's scores
   for (const share of shares) {
-    const player = props.players.find(p => p.name === share.player_name);
-    if (player) {
+    const mainPlayer = props.players.find(p => p.name === share.player_name);
+    if (mainPlayer) {
+      // Get other players' data
+      const otherPlayers: OtherPlayer[] = props.players
+        .filter(p => p.name !== mainPlayer.name)
+        .map(p => ({
+          name: p.name,
+          scores: p.scores,
+          total: calculateTotalScore(p)
+        }));
+
+      // Update Supabase with main player's scores and other players' data
       await supabase
         .from('shared_scores')
         .update({
-          scores: player.scores,
-          total: calculateTotalScore(player),
+          scores: mainPlayer.scores,
+          total: calculateTotalScore(mainPlayer),
+          other_players: otherPlayers,
           updated_at: new Date().toISOString()
         })
         .eq('id', share.id);
@@ -463,26 +491,26 @@ const updateSharedScores = async () => {
 };
 
 const submitScore = async (player: Player, category: string) => {
-  if (scoreInput.value === '-') {
-    delete(player.scores[category]);
-    cancelEdit();
-    return;
-  }
-
-  const score = getDefaultScore(category);
-  if (score >= 0) {
-    // Validate upper section scores
-    if (!validateUpperSectionScore(category, score)) {
-      if (!confirm(`Warning: ${score} seems invalid for ${category}. Are you sure?`)) {
-        return;
+  if (scoreInput.value === 0 || scoreInput.value) {
+    const score = getDefaultScore(category);
+    if (score >= 0) {
+      // Validate upper section scores
+      if (!validateUpperSectionScore(category, score)) {
+        if (!confirm(`Warning: ${score} seems invalid for ${category}. Are you sure?`)) {
+          return;
+        }
       }
+      
+      player.scores[category] = score;
+
+      // Update all shared scores including other players' data
+      await updateSharedScores();
+
+      cancelEdit();
     }
-    
-    player.scores[category] = score;
-
-    // Update all shared scores
+  } else {
+    delete(player.scores[category]);
     await updateSharedScores();
-
     cancelEdit();
   }
 };
