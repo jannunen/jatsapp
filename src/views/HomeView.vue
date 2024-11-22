@@ -13,10 +13,9 @@
       </div>
 
       <!-- Game Info Section -->
-      <button 
-        @click="showRules = !showRules"
-        class="mt-4 text-blue-500 hover:text-blue-600 dark:text-blue-400 text-sm"
-      >
+      <button
+              @click="showRules = !showRules"
+              class="mt-4 text-blue-500 hover:text-blue-600 dark:text-blue-400 text-sm">
         {{ showRules ? 'Hide Game Info' : 'Show Game Info' }}
       </button>
 
@@ -51,36 +50,57 @@
       <TopScores v-if="hasHistory" />
 
       <button
-        @click="startNewGame"
-        class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg font-bold text-lg dark:bg-green-600 dark:hover:bg-green-700"
-      >
+              @click="startNewGame"
+              class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg font-bold text-lg dark:bg-green-600 dark:hover:bg-green-700">
         New Game
       </button>
 
       <button
-        v-if="hasSavedGame"
-        @click="continueGame"
-        class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-lg font-bold text-lg dark:bg-blue-600 dark:hover:bg-blue-700"
-      >
+              v-if="hasSavedGame"
+              @click="continueGame"
+              class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-lg font-bold text-lg dark:bg-blue-600 dark:hover:bg-blue-700">
         Continue Game
       </button>
 
       <button
-        v-if="hasHistory"
-        @click="showHistory = !showHistory"
-        class="w-full bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded-lg font-bold text-lg dark:bg-purple-600 dark:hover:bg-purple-700"
-      >
+              v-if="hasHistory"
+              @click="showHistory = !showHistory"
+              class="w-full bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded-lg font-bold text-lg dark:bg-purple-600 dark:hover:bg-purple-700">
         {{ showHistory ? 'Hide History' : 'Show History' }}
       </button>
 
       <div v-if="showHistory && hasHistory" class="space-y-4">
         <h2 class="text-xl font-bold">Statistics</h2>
         <ScoreStats />
-        
+
         <h2 class="text-xl font-bold mt-6">Game History</h2>
         <ScoreHistory />
       </div>
     </div>
+    <!-- Footer -->
+    <footer class="mt-8 py-4 border-t border-gray-200 dark:border-gray-700">
+      <div class="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
+        <p class="mb-2">
+          From a slave of Yatzy to slaves of Yatzy
+          <br />
+          We don't use cookies, we don't use trackers. See our
+          <button
+                  @click="showPrivacy = true"
+                  class="text-blue-500 hover:text-blue-600 dark:text-blue-400 ml-2 underline">
+            privacy Policy
+          </button>
+          for more info.
+        </p>
+        <p class="text-xs italic">
+          "In Yatzy, as in life, it's not about the rolls you get, but how you use them."
+          <br>
+          - Ancient Dice Wisdom (probably)
+        </p>
+      </div>
+    </footer>
+
+
+
   </div>
 </template>
 

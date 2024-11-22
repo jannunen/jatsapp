@@ -23,26 +23,21 @@
       <router-view></router-view>
     </div>
 
-    <!-- Footer -->
-    <footer class="mt-8 py-4 border-t border-gray-200 dark:border-gray-700">
-      <div class="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p class="mb-2">
-          Made with 🤖 (Claude) and ❤️ | No data leaves your device
-        </p>
-        <p class="text-xs italic">
-          "In Yatzy, as in life, it's not about the rolls you get, but how you use them."
-          <br>
-          - Ancient Dice Wisdom (probably)
-        </p>
-      </div>
-    </footer>
+
+    <PrivacyPolicy 
+      :show="showPrivacy" 
+      @close="showPrivacy = false" 
+    />
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { useTheme } from './composables/useTheme';
+import PrivacyPolicy from './components/PrivacyPolicy.vue';
 
 const { isDark, toggleTheme } = useTheme();
+const showPrivacy = ref(false);
 </script>
 
 <style>

@@ -4,7 +4,11 @@
       <PlayerSetup @players-added="initializeGame" />
     </div>
     <div v-else>
-      <ScoreTable :players="players" @reset-scores="resetScores" @remove-player="removePlayer" />
+      <ScoreTable 
+        :players="players" 
+        @reset-scores="resetScores"
+        @remove-player="removePlayer"
+      />
       <div class="mt-4 flex gap-2">
         <button 
           @click="endGame" 
@@ -38,14 +42,6 @@ import ScoreTable from '../components/ScoreTable.vue';
 const router = useRouter();
 const players = ref([]);
 const gameStarted = ref(false);
-const removePlayer = (player) => {
-  if (confirm(`Are you sure you want to remove ${player.name}? All scores will be lost.`)) {
-    const index = players.value.findIndex(p => p === player);
-    if (index !== -1) {
-      players.value.splice(index, 1);
-    }
-  }
-};
 
 onMounted(() => {
   const savedState = localStorage.getItem('yatzyGameState');
@@ -86,6 +82,15 @@ const resetScores = () => {
   }
 };
 
+const removePlayer = (player) => {
+  if (confirm(`Are you sure you want to remove ${player.name}? Their scores will be lost.`)) {
+    const index = players.value.findIndex(p => p.name === player.name);
+    if (index !== -1) {
+      players.value = players.value.filter(p => p.name !== player.name);
+    }
+  }
+};
+
 const saveGameHistory = () => {
   const gameHistory = JSON.parse(localStorage.getItem('yatzyGameHistory') || '[]');
   
@@ -123,7 +128,6 @@ const cancelGame = () => {
 };
 
 const pauseGame = () => {
-  // Game state is already saved by the watcher
   router.push('/');
 };
 </script> 

@@ -1,8 +1,27 @@
- <template>
+<template>
   <div>
-    <div class="flex justify-between items-center mb-2">
-      <h2 class="text-base">Score Table</h2>
-      <div class="flex gap-2">
+    <div class="flex justify-around items-center mb-2">
+      
+
+        <button 
+          @click="endGame" 
+          class="bg-red-500 hover:bg-red-600 text-white py-1 text-xs px-2 rounded dark:bg-red-600 dark:hover:bg-red-700"
+        >
+          End 
+        </button>
+        <button 
+          @click="cancelGame" 
+          class="bg-gray-500 hover:bg-gray-600 text-white py-1 text-xs px-2 rounded dark:bg-gray-600 dark:hover:bg-gray-700"
+        >
+          Cancel 
+        </button>
+        <button 
+          @click="pauseGame" 
+          class="bg-blue-500 hover:bg-blue-600 text-white py-1 text-xs px-2 rounded dark:bg-blue-600 dark:hover:bg-blue-700"
+        >
+        Pause
+        </button>
+        
         <button 
           @click="showAddPlayer = true"
           class="bg-green-500 hover:bg-green-600 text-white text-xs px-2 py-1 rounded dark:bg-green-600 dark:hover:bg-green-700"
@@ -15,7 +34,7 @@
         >
           Reset Scores
         </button>
-      </div>
+      
     </div>
     <div class="rounded-lg overflow-x-auto">
       <div class="max-h-[80vh] overflow-y-auto">
@@ -33,6 +52,13 @@
                       title="Remove player"
                     >
                       ×
+                    </button>
+                    <button 
+                      @click.stop="sharePlayer(player)"
+                      class="text-blue-500 hover:text-blue-600 dark:text-blue-400 hover:scale-125 transition-transform"
+                      title="Share player stats"
+                    >
+                      📤
                     </button>
                   </div>
                   <span v-if="player.wins > 0" class="text-xs">
@@ -53,7 +79,7 @@
                 </div>
               </td>
               <!-- Player scores -->
-              <td v-for="player in props.players" :key="player.name" class="px-1 text-center">
+              <td v-for="player in players" :key="player.name" class="px-1 text-center">
                 
                 <div
                      @click="selectCell(player, category)"
@@ -74,17 +100,17 @@
             </tr>
             <!-- Upper section sum -->
             <tr class="bg-blue-50 dark:bg-blue-900">
-              <td class="px-2 py-0.5 font-bold bg-inherit">Sum</td>
-              <td v-for="player in props.players" :key="player.name" class="px-1 text-center text-lg">
+              <td class="px-2 font-bold bg-inherit">Sum</td>
+              <td v-for="player in players" :key="player.name" class="px-1 text-center ">
                 {{ calculateUpperSectionSum(player) }}
               </td>
-              <td class="px-2 py-0.5 font-bold bg-inherit">Sum</td>
+              <td class="px-2 font-bold bg-inherit">Sum</td>
             </tr>
             <!-- Upper section progress -->
             <tr class="bg-blue-50 dark:bg-blue-900">
               <td class="px-2 font-bold bg-inherit">(+/-)</td>
               <td
-                  v-for="player in props.players"
+                  v-for="player in players"
                   :key="player.name"
                   class=" px-1 text-center text-md"
                   :class="{
@@ -98,7 +124,7 @@
             <!-- Bonus -->
             <tr class="bg-green-100 dark:bg-green-900">
               <td class="px-2 font-bold bg-inherit">Bonus </td>
-              <td v-for="player in props.players" :key="player.name" class=" px-1 text-center text-md">
+              <td v-for="player in players" :key="player.name" class=" px-1 text-center text-md">
                 {{ calculateUpperSectionSum(player) >= 63 ? 50 : 0 }}
               </td>
               <td class="px-2 font-bold bg-inherit">Bonus </td>
@@ -113,7 +139,7 @@
                 </div>
               </td>
               <!-- Player scores -->
-              <td v-for="player in props.players" :key="player.name" class="px-1 text-center">
+              <td v-for="player in players" :key="player.name" class="px-1 text-center">
                 
                 <div
                      @click="selectCell(player, category)"
@@ -137,7 +163,7 @@
             <!-- Theoretical max -->
             <tr class="bg-gray-100 dark:bg-gray-800">
               <td class="px-2 py-1 font-bold bg-inherit">Theoretical</td>
-              <td v-for="player in props.players" :key="player.name" class="px-1 text-center text-md">
+              <td v-for="player in players" :key="player.name" class="px-1 text-center text-md">
                 {{ calculateMaxPossible(player) }}
               </td>
               <td class="px-2 py-1 font-bold bg-inherit">Theoretical</td>
@@ -145,7 +171,7 @@
             <!-- Total score -->
             <tr class="bg-yellow-100 font-bold text-sm dark:bg-yellow-900">
               <td class="px-2 py-1 bg-inherit">Total Score</td>
-              <td v-for="player in props.players" :key="player.name" class="px-1 py-1 text-center text-md transition-colors duration-300" :class="getPlayerPositionClass(player)">
+              <td v-for="player in players" :key="player.name" class="px-1 py-1 text-center text-md transition-colors duration-300" :class="getPlayerPositionClass(player)">
                 {{ calculateTotalScore(player) }}
               </td>
               <td class="px-2 py-1 bg-inherit">Total Score</td>
@@ -178,12 +204,7 @@
       </div>
       
       <template #actions>
-        <button 
-          @click="skipScore(editingPlayer, editingCategory)"
-          class="px-4 py-2 text-sm bg-orange-500 text-white rounded hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700"
-        >
-          Skip
-        </button>
+        
         <button 
           @click="clearScore(editingPlayer, editingCategory)"
           class="px-4 py-2 text-sm bg-orange-500 text-white rounded hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700"
@@ -263,349 +284,375 @@
         </button>
       </template>
     </Modal>
+
+    <PlayerShare 
+      :show="playerToShare !== null"
+      :player="playerToShare"
+      :players="props.players"
+      @close="playerToShare = null"
+    />
   </div>
 </template>
 
- <script>
- import { ref, nextTick, computed } from 'vue';
- import { useScoreStats } from '../composables/useScoreStats';
- import Modal from './Modal.vue';
+<script setup lang="ts">
+import { ref, nextTick, computed } from 'vue';
+import { useScoreStats } from '../composables/useScoreStats';
+import Modal from './Modal.vue';
+import PlayerShare from './PlayerShare.vue';
+import { useRouter } from 'vue-router';
+import { supabase } from '../lib/supabase';
 
- export default {
-   components: {
-     Modal
-   },
-   props: {
-     players: Array,
-   },
-   emits: ['reset-scores', 'remove-player'],
-   setup(props, { emit }) {
-     const upperCategories = ['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes'];
-     const lowerCategories = [
-       'One Pair', 'Two Pairs', 'Three of a Kind', 'Four of a Kind', 
-       'Full House', 'Small Straight', 'Large Straight', 'Yahtzee', 'Chance'
-     ];
+const router = useRouter();
 
-     const editingPlayer = ref(null);
-     const editingCategory = ref('');
-     const scoreInput = ref(0);
-     const scoreInputRef = ref(null);
+const props = defineProps<{
+  players: Player[];
+}>();
 
-     const calculateUpperSectionSum = (player) => {
-       return upperCategories.reduce((sum, category) => {
-         return sum + (player.scores[category] || 0);
-       }, 0);
-     };
+const emit = defineEmits(['reset-scores', 'remove-player']);
 
-     const calculateTotalScore = (player) => {
-       const upperSum = calculateUpperSectionSum(player);
-       const bonus = upperSum >= 63 ? 50 : 0;
-       const lowerSum = lowerCategories.reduce((sum, category) => {
-         return sum + (player.scores[category] || 0);
-       }, 0);
-       return upperSum + bonus + lowerSum;
-     };
+const upperCategories = ['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes'];
+const lowerCategories = [
+  'One Pair', 'Two Pairs', 'Three of a Kind', 'Four of a Kind', 
+  'Full House', 'Small Straight', 'Large Straight', 'Yahtzee', 'Chance'
+];
 
-     const isEditing = (player, category) => {
-       return editingPlayer.value === player && editingCategory.value === category;
-     };
+const editingPlayer = ref(null);
+const editingCategory = ref('');
+const scoreInput = ref(0);
+const scoreInputRef = ref(null);
 
-     const cancelEdit = () => {
-       editingPlayer.value = null;
-       editingCategory.value = '';
-       scoreInput.value = 0;
-     };
+const calculateUpperSectionSum = (player) => {
+  return upperCategories.reduce((sum, category) => {
+    return sum + (player.scores[category] || 0);
+  }, 0);
+};
 
-     const selectCell = async (player, category) => {
-       if (player.scores[category] !== undefined) {
-         scoreInput.value = player.scores[category];
-       } else {
-         scoreInput.value = getDefaultScore(category);
-       }
-       
-       editingPlayer.value = player;
-       editingCategory.value = category;
-       
-       nextTick().then(() => {
-         document.getElementById('modalScoreInput').focus()
-         document.getElementById('modalScoreInput').select()
-         // Change text color to blue
-         document.getElementById('modalScoreInput').style.color = 'blue'
-         document.getElementById('modalScoreInput').click()
-       })
-     };
+const calculateTotalScore = (player) => {
+  const upperSum = calculateUpperSectionSum(player);
+  const bonus = upperSum >= 63 ? 50 : 0;
+  const lowerSum = lowerCategories.reduce((sum, category) => {
+    return sum + (player.scores[category] || 0);
+  }, 0);
+  return upperSum + bonus + lowerSum;
+};
 
-     const getDefaultScore = (category) => {
-       
-       switch (category) {
-         case 'Small Straight':
-           return  15;
-         case 'Large Straight':
-           return  20;
-         case 'Yahtzee':
-           return 50;
-         default:
-           return scoreInput.value;
-       }
-     };
+const isEditing = (player, category) => {
+  return editingPlayer.value === player && editingCategory.value === category;
+};
 
-     const validateUpperSectionScore = (category, score) => {
-       if (score === 0) return true;
-       
-       const categoryValues = {
-         'Ones': 1,
-         'Twos': 2,
-         'Threes': 3,
-         'Fours': 4,
-         'Fives': 5,
-         'Sixes': 6
-       };
+const cancelEdit = () => {
+  editingPlayer.value = null;
+  editingCategory.value = '';
+  scoreInput.value = 0;
+};
 
-       const value = categoryValues[category];
-       if (!value) return true; // Not an upper section category
+const selectCell = async (player, category) => {
+  if (player.scores[category] !== undefined) {
+    scoreInput.value = player.scores[category];
+  } else {
+    scoreInput.value = getDefaultScore(category);
+  }
+  
+  editingPlayer.value = player;
+  editingCategory.value = category;
+  
+  nextTick().then(() => {
+    document.getElementById('modalScoreInput').focus()
+    document.getElementById('modalScoreInput').select()
+    // Change text color to blue
+    document.getElementById('modalScoreInput').style.color = 'blue'
+    document.getElementById('modalScoreInput').click()
+  })
+};
 
-       // Check if score is divisible by the category value
-       if (score % value !== 0) {
-         return false;
-       }
+const endGame = () => {
+  if (confirm('Are you sure you want to end the game? This will save the results and reset all scores.')) {
+    saveGameHistory();
+    localStorage.removeItem('yatzyGameState');
+    router.push('/');
+  }
+};
 
-       // Check if score is not higher than possible (5 dice)
-       const maxPossible = value * 5;
-       if (score > maxPossible) {
-         return false;
-       }
+const cancelGame = () => {
+  if (confirm('Are you sure you want to cancel the game? All progress will be lost.')) {
+    localStorage.removeItem('yatzyGameState');
+    router.push('/');
+  }
+};
 
-       return true;
-     };
+const pauseGame = () => {
+  // Game state is already saved by the watcher
+  router.push('/');
+};
 
-     const clearScore = (player, category) => {
-       delete(player.scores[category]);
-       cancelEdit();
-     };
+const getDefaultScore = (category) => {
+  switch (category) {
+    case 'Small Straight':
+      return 15;
+    case 'Large Straight':
+      return 20;
+    case 'Yahtzee':
+      return 50;
+    default:
+      return scoreInput.value;
+  }
+};
 
-     const skipScore = (player, category) => {  
-      scoreInput.value = '0';
-      submitScore(player, category);
-     };
+const validateUpperSectionScore = (category, score) => {
+  if (score === 0) return true;
+  
+  const categoryValues = {
+    'Ones': 1,
+    'Twos': 2,
+    'Threes': 3,
+    'Fours': 4,
+    'Fives': 5,
+    'Sixes': 6
+  };
 
-     const submitScore = (player, category) => {
-       if (scoreInput.value == '-') {
-         delete(player.scores[category]);
-         cancelEdit();
-         return;
-       }
+  const value = categoryValues[category];
+  if (!value) return true; // Not an upper section category
 
-       if (scoreInput.value >= 0) {
-         // Validate upper section scores
-         if (!validateUpperSectionScore(category, scoreInput.value)) {
-           if (!confirm(`Warning: ${scoreInput.value} seems invalid for ${category}. Are you sure?`)) {
-             return;
-           }
-         }
-         
-         player.scores[category] = scoreInput.value;
-         cancelEdit();
-       }
-     };
+  // Check if score is divisible by the category value
+  if (score % value !== 0) {
+    return false;
+  }
 
-     const calculateProgress = (player) => {
-       let totalExpected = 0;
-       
-       // For each category in upper section
-       upperCategories.forEach((category, index) => {
-         const number = index + 1; // 1 for Ones, 2 for Twos, etc.
-         
-         const score = player.scores[category]
-         if (score !== undefined &&
-            score !== '-' &&
-            !isNaN(parseInt(score))) {
-           // If category is filled, use actual score
-           totalExpected += parseInt(score);
-         } else {
-           // If empty, expect 3 dice of that number
-           totalExpected += number * 3;
-         }
-       });
-       
-       // Compare with target 63
-       return totalExpected - 63;
-     };
+  // Check if score is not higher than possible (5 dice)
+  const maxPossible = value * 5;
+  if (score > maxPossible) {
+    return false;
+  }
 
-     const formatProgress = (progress) => {
-       if (progress > 0) return `+${progress}`;
-       return progress.toString();
-     };
+  return true;
+};
 
-     const getMaxForCategory = (category) => {
-       switch (category) {
-         case 'Ones': return 5;
-         case 'Twos': return 10;
-         case 'Threes': return 15;
-         case 'Fours': return 20;
-         case 'Fives': return 25;
-         case 'Sixes': return 30;
-         case 'One Pair': return 12;
-         case 'Two Pairs': return 22;
-         case 'Three of a Kind': return 30;
-         case 'Four of a Kind': return 30;
-         case 'Full House': return 28;
-         case 'Small Straight': return 15;
-         case 'Large Straight': return 20;
-         case 'Yahtzee': return 50;
-         case 'Chance': return 30;
-         default: return 0;
-       }
-     };
+const clearScore = (player, category) => {
+  delete(player.scores[category]);
+  cancelEdit();
+};
 
-     const calculateMaxPossible = (player) => {
-       let total = 0;
-       
-       // Add current scores
-       [...upperCategories, ...lowerCategories].forEach(category => {
-        const score = player.scores[category];
-        if (score !== undefined &&
-            score !== '-' &&
-            !isNaN(parseInt(score))) {
-           total += parseInt(score);
-         } else {
-           // Add maximum possible for unfilled categories
-           total += getMaxForCategory(category);
-         }
-       });
+const skipScore = (player, category) => {  
+  scoreInput.value = '0';
+  submitScore(player, category);
+};
 
-       // Add bonus if upper section could reach 63
-       const currentUpperSum = calculateUpperSectionSum(player);
-       const remainingUpperMax = upperCategories
-         .filter(category => player.scores[category] === undefined)
-         .reduce((sum, category) => sum + getMaxForCategory(category), 0);
+const updateSharedScores = async () => {
+  // Get all active shares
+  const { data: shares } = await supabase
+    .from('shared_scores')
+    .select('id, player_name')
+    .in('player_name', props.players.map(p => p.name));
 
-       if (currentUpperSum + remainingUpperMax >= 63) {
-         total += 50; // Add bonus
-       }
+  if (!shares) return;
 
-       return total;
-     };
+  // Update each shared player's scores
+  for (const share of shares) {
+    const player = props.players.find(p => p.name === share.player_name);
+    if (player) {
+      await supabase
+        .from('shared_scores')
+        .update({
+          scores: player.scores,
+          total: calculateTotalScore(player),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', share.id);
+    }
+  }
+};
 
-     const { getAverageForCategory, formatAverage } = useScoreStats();
+const submitScore = async (player: Player, category: string) => {
+  if (scoreInput.value === '-') {
+    delete(player.scores[category]);
+    cancelEdit();
+    return;
+  }
 
-     const getPlayerWins = (playerName) => {
-       const history = JSON.parse(localStorage.getItem('yatzyGameHistory') || '[]');
-       return history.filter(game => game.winner === playerName).length;
-     };
+  const score = getDefaultScore(category);
+  if (score >= 0) {
+    // Validate upper section scores
+    if (!validateUpperSectionScore(category, score)) {
+      if (!confirm(`Warning: ${score} seems invalid for ${category}. Are you sure?`)) {
+        return;
+      }
+    }
+    
+    player.scores[category] = score;
 
-     const playersWithWins = computed(() => {
-       return props.players.map(player => ({
-         ...player,
-         wins: getPlayerWins(player.name)
-       }));
-     });
+    // Update all shared scores
+    await updateSharedScores();
 
-     const getPlayerPositionClass = (player) => {
-       const scores = props.players.map(p => ({
-         name: p.name,
-         total: calculateTotalScore(p)
-       }));
-       
-       // Sort by score in descending order
-       scores.sort((a, b) => b.total - a.total);
-       
-       // Find position of current player
-       const position = scores.findIndex(p => p.name === player.name);
-       
-       if (scores.length <= 1) return '';
-       
-       // Return color class based on position
-       if (position === 0) {
-         return 'bg-green-100 dark:bg-green-900'; // Leader
-       } else if (position === scores.length - 1) {
-         return 'bg-red-100 dark:bg-red-900'; // Last place
-       } else {
-         // Calculate gradient for middle positions
-         const total = scores.length - 1;
-         const percentage = position / total;
-         if (percentage <= 0.5) {
-           return 'bg-lime-50 dark:bg-lime-900/50'; // Closer to first
-         } else {
-           return 'bg-orange-50 dark:bg-orange-900/50'; // Closer to last
-         }
-       }
-     };
+    cancelEdit();
+  }
+};
 
-     const showAddPlayer = ref(false);
-     const newPlayerName = ref('');
-     const playerToRemove = ref(null);
+const calculateProgress = (player) => {
+  let totalExpected = 0;
+  
+  // For each category in upper section
+  upperCategories.forEach((category, index) => {
+    const number = index + 1; // 1 for Ones, 2 for Twos, etc.
+    
+    const score = player.scores[category]
+    if (score !== undefined &&
+        score !== '-' &&
+        !isNaN(parseInt(score))) {
+      // If category is filled, use actual score
+      totalExpected += parseInt(score);
+    } else {
+      // If empty, expect 3 dice of that number
+      totalExpected += number * 3;
+    }
+  });
+  
+  // Compare with target 63
+  return totalExpected - 63;
+};
 
-     const addPlayer = () => {
-       if (newPlayerName.value.trim()) {
-         props.players.push({
-           name: newPlayerName.value.trim(),
-           scores: {},
-           total: 0
-         });
-         showAddPlayer.value = false;
-         newPlayerName.value = '';
-       }
-     };
+const formatProgress = (progress) => {
+  if (progress > 0) return `+${progress}`;
+  return progress.toString();
+};
 
-     const cancelAddPlayer = () => {
-       showAddPlayer.value = false;
-       newPlayerName.value = '';
-     };
+const getMaxForCategory = (category) => {
+  switch (category) {
+    case 'Ones': return 5;
+    case 'Twos': return 10;
+    case 'Threes': return 15;
+    case 'Fours': return 20;
+    case 'Fives': return 25;
+    case 'Sixes': return 30;
+    case 'One Pair': return 12;
+    case 'Two Pairs': return 22;
+    case 'Three of a Kind': return 30;
+    case 'Four of a Kind': return 30;
+    case 'Full House': return 28;
+    case 'Small Straight': return 15;
+    case 'Large Straight': return 20;
+    case 'Yahtzee': return 50;
+    case 'Chance': return 30;
+    default: return 0;
+  }
+};
 
-     const removePlayer = (player) => {
-       emit('remove-player', player);
-     };
+const calculateMaxPossible = (player) => {
+  let total = 0;
+  
+  // Add current scores
+  [...upperCategories, ...lowerCategories].forEach(category => {
+    const score = player.scores[category];
+    if (score !== undefined &&
+        score !== '-' &&
+        !isNaN(parseInt(score))) {
+      total += parseInt(score);
+    } else {
+      // Add maximum possible for unfilled categories
+      total += getMaxForCategory(category);
+    }
+  });
 
-     const confirmRemovePlayer = () => {
-       playerToRemove.value = null;
-     };
+  // Add bonus if upper section could reach 63
+  const currentUpperSum = calculateUpperSectionSum(player);
+  const remainingUpperMax = upperCategories
+    .filter(category => player.scores[category] === undefined)
+    .reduce((sum, category) => sum + getMaxForCategory(category), 0);
 
-     const cancelRemovePlayer = () => {
-       playerToRemove.value = null;
-     };
+  if (currentUpperSum + remainingUpperMax >= 63) {
+    total += 50; // Add bonus
+  }
 
-     // Add player name column header with remove button
-     const renderPlayerHeader = (player) => {
-       return {
-         name: player.name,
-         wins: getPlayerWins(player.name),
-         removeAction: () => removePlayer(player)
-       };
-     };
+  return total;
+};
 
-     return { 
-       upperCategories,
-       lowerCategories,
-       editingPlayer, 
-       editingCategory, 
-       scoreInput,
-       scoreInputRef,
-       isEditing, 
-       selectCell, 
-       submitScore,
-       skipScore,
-       clearScore,
-       calculateUpperSectionSum,
-       calculateTotalScore,
-       calculateProgress,
-       formatProgress,
-       cancelEdit,
-       calculateMaxPossible,
-       getAverageForCategory,
-       formatAverage,
-       playersWithWins,
-       props,
-       getPlayerPositionClass,
-       showAddPlayer,
-       newPlayerName,
-       playerToRemove,
-       addPlayer,
-       cancelAddPlayer,
-       removePlayer,
-       confirmRemovePlayer,
-       cancelRemovePlayer,
-       renderPlayerHeader
-     };
-   },
- };
- </script>
+const { getAverageForCategory, formatAverage } = useScoreStats();
+
+const getPlayerWins = (playerName) => {
+  const history = JSON.parse(localStorage.getItem('yatzyGameHistory') || '[]');
+  return history.filter(game => game.winner === playerName).length;
+};
+
+const playersWithWins = computed(() => {
+  return props.players.map(player => ({
+    ...player,
+    wins: getPlayerWins(player.name)
+  }));
+});
+
+const getPlayerPositionClass = (player) => {
+  const scores = props.players.map(p => ({
+    name: p.name,
+    total: calculateTotalScore(p)
+  }));
+  
+  // Sort by score in descending order
+  scores.sort((a, b) => b.total - a.total);
+  
+  // Find position of current player
+  const position = scores.findIndex(p => p.name === player.name);
+  
+  if (scores.length <= 1) return '';
+  
+  // Return color class based on position
+  if (position === 0) {
+    return 'bg-green-100 dark:bg-green-900'; // Leader
+  } else if (position === scores.length - 1) {
+    return 'bg-red-100 dark:bg-red-900'; // Last place
+  } else {
+    // Calculate gradient for middle positions
+    const total = scores.length - 1;
+    const percentage = position / total;
+    if (percentage <= 0.5) {
+      return 'bg-lime-50 dark:bg-lime-900/50'; // Closer to first
+    } else {
+      return 'bg-orange-50 dark:bg-orange-900/50'; // Closer to last
+    }
+  }
+};
+
+const showAddPlayer = ref(false);
+const newPlayerName = ref('');
+const playerToRemove = ref(null);
+const playerToShare = ref(null);
+
+const addPlayer = () => {
+  if (newPlayerName.value.trim()) {
+    props.players.push({
+      name: newPlayerName.value.trim(),
+      scores: {},
+      total: 0
+    });
+    showAddPlayer.value = false;
+    newPlayerName.value = '';
+  }
+};
+
+const cancelAddPlayer = () => {
+  showAddPlayer.value = false;
+  newPlayerName.value = '';
+};
+
+const removePlayer = (player) => {
+  emit('remove-player', player);
+};
+
+const confirmRemovePlayer = () => {
+  playerToRemove.value = null;
+};
+
+const cancelRemovePlayer = () => {
+  playerToRemove.value = null;
+};
+
+const renderPlayerHeader = (player) => {
+  return {
+    name: player.name,
+    wins: getPlayerWins(player.name),
+    removeAction: () => removePlayer(player)
+  };
+};
+
+const sharePlayer = (player) => {
+  playerToShare.value = player;
+};
+</script>
