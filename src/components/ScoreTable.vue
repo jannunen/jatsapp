@@ -380,6 +380,27 @@ const pauseGame = () => {
   router.push('/');
 };
 
+const saveGameHistory = () => {
+  const gameHistory = JSON.parse(localStorage.getItem('yatzyGameHistory') || '[]');
+  
+  const finishedGame = {
+    timestamp: new Date().toISOString(),
+    players: props.players.map(player => ({
+      name: player.name,
+      scores: player.scores,
+      total: Object.values(player.scores).reduce((a, b) => a + (b || 0), 0)
+    })),
+    winner: props.players.reduce((prev, current) => {
+      const prevTotal = Object.values(prev.scores).reduce((a, b) => a + (b || 0), 0);
+      const currentTotal = Object.values(current.scores).reduce((a, b) => a + (b || 0), 0);
+      return prevTotal > currentTotal ? prev : current;
+    }).name
+  };
+
+  gameHistory.push(finishedGame);
+  localStorage.setItem('yatzyGameHistory', JSON.stringify(gameHistory));
+};
+
 const getDefaultScore = (category) => {
   switch (category) {
     case 'Small Straight':

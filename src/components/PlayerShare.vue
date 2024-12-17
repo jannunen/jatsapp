@@ -96,7 +96,7 @@ const error = ref(false);
 const shareUrl = computed(() => {
   if (!shareId.value) return '';
   const baseUrl = window.location.origin + import.meta.env.VITE_BASE_URL;
-  return `${baseUrl}/share?id=${shareId.value}`;
+  return `${baseUrl}share?id=${shareId.value}`;
 });
 
 const getOtherPlayers = (): OtherPlayerScore[] => {

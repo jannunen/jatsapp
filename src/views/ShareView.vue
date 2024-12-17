@@ -33,6 +33,7 @@
           <div v-for="(maxScore, category) in lowerSection" :key="category"
                class="flex justify-between items-center py-1 border-b dark:border-gray-700">
             <span>{{ category }}</span>
+            {{ playerData.scores[category] }}
             <span v-if="playerData.scores[category]" 
                   class="font-bold">
               {{ playerData.scores[category] }}

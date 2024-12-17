@@ -13,7 +13,6 @@
         <p>✓ Share scores with friends and update them in real-time (shared scores are deleted after 24 hours)</p>
         <p>✓ No cookies, no trackers</p>
         <p>✓ Backup and restore your game data, check privacy policy for more info</p>
-        <p>* If you like the app, you can donate ETH to <a href="https://etherscan.io/address/0xdBeF8b4da833CC5257335f706d0070981A01eF69" target="_blank" class="text-blue-500 hover:text-blue-600 dark:text-blue-400 underline">0xdBeF8b4da833CC5257335f706d0070981A01eF69</a></p>
       </div>
 
       <!-- Game Info Section -->
@@ -111,6 +110,7 @@
         <br>
         - Ancient Dice Wisdom (probably)
       </p>
+        <p> If you like the app, you can donate ETH to <a href="https://etherscan.io/address/0xdBeF8b4da833CC5257335f706d0070981A01eF69" target="_blank" class="text-blue-500 hover:text-blue-600 dark:text-blue-400 underline">0xdBeF8b4da833CC5257335f706d0070981A01eF69</a></p>
     </div>
   </footer>
     <PrivacyPolicy 
